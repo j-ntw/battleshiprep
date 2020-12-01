@@ -184,12 +184,46 @@ def place_ship(ship_name):
     #maybe I dont need to return anything cos i just write it to database
     return [ship_name, ls_points]
 
-#ship is  Write list of points to database for key: ship type, value is a dictionary with key as player id and value as list of ship coordinates
+#Takes a list of ship name and list of ship points
+#Writes list of points to database for key: ship type, value is a dictionary with key as player id and value as list of ship coordinates
 def write_ship(ship, P1_id):
     ship_name = ship[0]
     ls_points = ship[1]
     #gets the current dictionary for that ship_name
     db.child(ship_name).get('idToken')
+
+P1_id = ls_player_id[0]
+P2_id = ls_player_id[1]
+#query a dictionary from the key "Player_name"
+    dict_player_name = db.child("Player_name").get(user['idToken'])
+    #if no names, write Player 1 name
+    if dict_player_name == None:
+        dict_player_name = {P1_id : P1_name}
+    while len(dict_player_name) <=2 :
+        
+        #if player 1 name is inside and player 2 name is not yet written,wait
+        if dict_player_name == {P1_id : P1_name} :
+            sleep(1)
+            continue
+        #if player 1 name is not inside, but player 2 is
+        #write player 1 name
+        elif len(dict_player_name) == 1 and dict_player_name != {P1_id : P1_name}:
+            P2_name = dict_player_name.get(P2_id)
+            dict_player_name = {P1_id : P1_name , P2_id : P2_name}
+            db.child("Player_name").set(dict_player_name, user['idToken'])
+        #if both player name in dictionary, break the while loop
+        elif len(dict_player_name) == 2:
+            break
+        else:
+            print("create_dict_player_name() error")
+            
+    #use player 2 id to get player 2 name
+    P2_name = dict_player_name.get(P2_id)
+    print(P1_name, " is playing with ", P2_name)
+    #return nothing
+
+
+
 
 ##############        
 
@@ -224,78 +258,4 @@ def main():
         pass
 
 
-"""
-There are 3 phases: 
-1. Matching Phase
-2. Setup Phase
-3. War Phase
 
-Matching Phase:
-Player enter
-Players will enter their names -done
-CPU generate unique id, check if another player has joined the game and capture their id
-CPU will read Player 2 name using P2_id -done
-
-Setup Phase:
-
-Place their ships(
-    Horizontal or Vertical only, 
-    no overlap
-    no change in position once War Phase starts) -done
-
-Once all done, CPU will write ship positions to database under their unique id
-
-Initialise the board and start War Phase
-
-War Phase:
-This is an infinite loop till a win or lose condition is fulfilled
-
-Player 1 Attack:
-Player 1 calls a shot "A1"
-CPU checks if miss or hit and updates the board. (clear all output)
-If hit and not in list of known enemy ships:
-    add to list of known enemy ships
-
-CPU checks if Player 2 has any surviving ships.
-If Player 2 has no remaining ships
-    Player 1 wins
-else
-    Player 1 ends turn, Player 2 turn starts
-
-Player 2 Attack:
-Player 1 calls a shot "B5"
-CPU checks if miss or hit and updates the board. (clear all output)
-CPU checks if Player 1 has any surviving ships.
-If Player 1 has no remaining ships
-    Player 2 wins
-else
-    Player 2 ends turn, Player 1 turn starts
-
-
-CPU checks:
-Setup Phase:
-    ships are in one piece not separate (may be difficult),
-    Horizontal or Vertical only, 
-    no overlap of ships,
-    all ships within the board (length check),
-    no change in position once War Phase starts
-War Phase:
-    If Hit
-        change state of that ship section from 1 to dead
-    else
-        (miss) change state of tile from -
-
-Each time the board changes state or the CPU makes a check, the Realtime Database is referenced.
-Database Read/Writes:
-
-Player identity: maybe use a random identity generator at the start of the game to differentiate players?
-Ship positions for individual ships
-shot_list
-hit_list
-destroyed ship list for each player
-
-ability to replay the game
-SALVO game type
-
-
-"""
