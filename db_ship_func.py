@@ -56,13 +56,14 @@ def get_id(P1_name):
     P1_id = generate_unique_id()
     print(P1_id)
     ls_player_id = db.child("Player_id").get(user['idToken']).val()
+    id_timeout = 0 #max timeout is 15*5 seconds 
     
     #if no players, player 1 joins the game and update the database
     if (ls_player_id == None):
         print("joining game with id")
         db.child("Player_id").set([P1_id], user['idToken'])
     ls_player_id = list( db.child("Player_id").get(user['idToken']).val())
-    while len(ls_player_id) <=2 :
+    while (len(ls_player_id) <=2) and (id_timeout <=15) :
         #if player 1 is the only one in the game, wait for player 2 
         if ls_player_id == [P1_id] :
             print("Player 2 has not yet joined.")
@@ -84,7 +85,7 @@ def get_id(P1_name):
         else:
             print("get_id() error")
             break
-            
+        id_timeout += 1    
     return ls_player_id
 
 ##########################
@@ -94,17 +95,19 @@ def create_dict_player_name(P1_name, ls_player_id):
     P2_id = ls_player_id[1]
     #query a dictionary from the key "Player_name"
     dict_player_name = db.child("Player_name").get(user['idToken']).val()
+    player_name_timeout = 0 #wait for max of 15*5 seconds to get player 2 name
+
     #if no names, write Player 1 name
     if dict_player_name == None:
         print("Adding Player 1")
         db.child("Player_name").set({P1_id : P1_name}, user['idToken'])
     dict_player_name = dict(db.child("Player_name").get(user['idToken']).val())
-    while len(dict_player_name) <=2 :
+    while (len(dict_player_name) <=2) and (player_name_timeout <= 15) :
         if len(dict_player_name) == 1:
             #if player 1 name is inside and player 2 name is not yet written,wait
             if dict_player_name == {P1_id : P1_name}:
                 print("Waiting for Player 2")
-                sleep(1)
+                sleep(5)
                 continue
             #if player 1 name is not inside, but player 2 is
             #write player 1 name
@@ -120,7 +123,7 @@ def create_dict_player_name(P1_name, ls_player_id):
             break
         else:
             print("create_dict_player_name() error")
-    
+        player_name_timeout +=1
     print(dict_player_name)    
     #use player 2 id to get player 2 name
     P2_name = dict_player_name.get(P2_id)
