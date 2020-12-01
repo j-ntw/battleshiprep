@@ -190,39 +190,17 @@ def write_ship(ship, P1_id):
     ship_name = ship[0]
     ls_points = ship[1]
     #gets the current dictionary for that ship_name
-    db.child(ship_name).get('idToken')
+    ship_dict = db.child(ship_name).get(user['idToken']).val()
 
-P1_id = ls_player_id[0]
-P2_id = ls_player_id[1]
-#query a dictionary from the key "Player_name"
-    dict_player_name = db.child("Player_name").get(user['idToken'])
-    #if no names, write Player 1 name
-    if dict_player_name == None:
-        dict_player_name = {P1_id : P1_name}
-    while len(dict_player_name) <=2 :
-        
-        #if player 1 name is inside and player 2 name is not yet written,wait
-        if dict_player_name == {P1_id : P1_name} :
-            sleep(1)
-            continue
-        #if player 1 name is not inside, but player 2 is
-        #write player 1 name
-        elif len(dict_player_name) == 1 and dict_player_name != {P1_id : P1_name}:
-            P2_name = dict_player_name.get(P2_id)
-            dict_player_name = {P1_id : P1_name , P2_id : P2_name}
-            db.child("Player_name").set(dict_player_name, user['idToken'])
-        #if both player name in dictionary, break the while loop
-        elif len(dict_player_name) == 2:
-            break
-        else:
-            print("create_dict_player_name() error")
-            
-    #use player 2 id to get player 2 name
-    P2_name = dict_player_name.get(P2_id)
-    print(P1_name, " is playing with ", P2_name)
-    #return nothing
-
-
+    if ship_dict == None:
+        print("There are currently no ships.")
+        ship_dict = {P1_id : ls_points}
+    else:
+        print("There are currently {} ships.".format(len(ship_dict)))
+    ship_dict[P1_id] = ls_points
+    db.child(ship_name).set(ship_dict, user['idToken'])
+    print("{} written to {}!".format(ship_dict, ship_name))
+    #returns nothing
 
 
 ##############        
@@ -235,19 +213,18 @@ def main():
     #Matching Phase
     #Ask for player name
     P1_name = ask_player_name()
-    P1_id = generate_unique_id()
-
-   
-    sleep(2)
-
-
+    ls_player_id = get_id(P1_name)
+    dict_player_name = create_dict_player_name(P1_name, ls_player_id)
 
     #Setup Phase
     print("SETUP PHASE: BEGIN!")
-    sleep(2)
+    #max timeout for Setup phase, after which it exits the game to reduce calls on database
+    #timeouts need to be in place_ship()
     for ship_name in all_ships_dict:
         ship = place_ship(ship_name)
         write_ship(ship)
+
+    
     while P2_ready == False:
         sleep(5)
         print("Waiting on Player 2...")
