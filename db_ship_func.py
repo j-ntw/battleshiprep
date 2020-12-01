@@ -93,11 +93,12 @@ def create_dict_player_name(P1_name, ls_player_id):
     P1_id = ls_player_id[0]
     P2_id = ls_player_id[1]
     #query a dictionary from the key "Player_name"
-    dict_player_name = dict(db.child("Player_name").get(user['idToken']).val())
+    dict_player_name = db.child("Player_name").get(user['idToken']).val()
     #if no names, write Player 1 name
     if dict_player_name == None:
         print("Adding Player 1")
         db.child("Player_name").set({P1_id : P1_name}, user['idToken'])
+    dict_player_name = dict(db.child("Player_name").get(user['idToken']).val())
     while len(dict_player_name) <=2 :
         if len(dict_player_name) == 1:
             #if player 1 name is inside and player 2 name is not yet written,wait
@@ -115,7 +116,7 @@ def create_dict_player_name(P1_name, ls_player_id):
                 
         #if both player name in dictionary, break the while loop
         elif len(dict_player_name) == 2:
-            print("both players are in the game!")
+            print("both players are already in the game!")
             break
         else:
             print("create_dict_player_name() error")
@@ -125,3 +126,4 @@ def create_dict_player_name(P1_name, ls_player_id):
     P2_name = dict_player_name.get(P2_id)
     print(P1_name, "is playing with", P2_name)
     return {P1_id : P1_name , P2_id : P2_name}
+
