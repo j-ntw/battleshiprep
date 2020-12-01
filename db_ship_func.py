@@ -130,3 +130,18 @@ def create_dict_player_name(P1_name, ls_player_id):
     print(P1_name, "is playing with", P2_name)
     return {P1_id : P1_name , P2_id : P2_name}
 
+def write_ship(ship, P1_id):
+    ship_name = ship[0]
+    ls_points = ship[1]
+    #gets the current dictionary for that ship_name
+    ship_dict = db.child(ship_name).get(user['idToken']).val()
+
+    if ship_dict == None:
+        print("There are currently no ships.")
+        ship_dict = {P1_id : ls_points}
+    else:
+        print("There are currently {} ships.".format(len(ship_dict)))
+    ship_dict[P1_id] = ls_points
+    db.child(ship_name).set(ship_dict, user['idToken'])
+    print("{} written to {}!".format(ship_dict, ship_name))
+    #returns nothing
