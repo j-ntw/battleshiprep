@@ -222,7 +222,7 @@ def main():
     #timeouts need to be in place_ship()
     for ship_name in all_ships_dict:
         ship = place_ship(ship_name)
-        write_ship(ship)
+        write_ship(ship, P1_id)
 
     
     while P2_ready == False:
