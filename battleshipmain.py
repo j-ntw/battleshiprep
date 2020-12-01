@@ -185,8 +185,11 @@ def place_ship(ship_name):
     return [ship_name, ls_points]
 
 #ship is  Write list of points to database for key: ship type, value is a dictionary with key as player id and value as list of ship coordinates
-def write_ship(ship):
-    
+def write_ship(ship, P1_id):
+    ship_name = ship[0]
+    ls_points = ship[1]
+    #gets the current dictionary for that ship_name
+    db.child(ship_name).get('idToken')
 
 ##############        
 
