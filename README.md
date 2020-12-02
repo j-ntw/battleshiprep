@@ -18,25 +18,19 @@ Project is created with:
 ## Setup
 To run this project, run battleshipmain.py along with the corresponding modules in the same folder.
 
-There are 3 phases: 
-1. Matching Phase
-2. Setup Phase
-3. War Phase
-
-Matching Phase:
-Player enter
-Players will enter their names -done
-CPU generate unique id, check if another player has joined the game and capture their id
-CPU will read Player 2 name using P2_id -done
+There are 2 phases: 
+1. Setup Phase
+2. War Phase
 
 Setup Phase:
-
+Player enter
+Player will enter their name -done
 Place their ships(
     Horizontal or Vertical only, 
     no overlap
     no change in position once War Phase starts) -done
 
-Once all done, CPU will write ship positions to database under their unique id
+Once all done, CPU will write ship positions to dict
 
 Initialise the board and start War Phase
 
@@ -44,7 +38,7 @@ War Phase:
 This is an infinite loop till a win or lose condition is fulfilled
 
 Player 1 Attack:
-Player 1 calls a shot "A1"
+Player 1 calls a shot e.g."A1"
 CPU checks if miss or hit and updates the board. (clear all output)
 If hit and not in list of known enemy ships:
     add to list of known enemy ships
@@ -55,8 +49,8 @@ If Player 2 has no remaining ships
 else
     Player 1 ends turn, Player 2 turn starts
 
-Player 2 Attack:
-Player 1 calls a shot "B5"
+CPU Attack:
+CPU calls a random shot from list of available points.
 CPU checks if miss or hit and updates the board. (clear all output)
 CPU checks if Player 1 has any surviving ships.
 If Player 1 has no remaining ships
@@ -81,7 +75,6 @@ War Phase:
 Each time the board changes state or the CPU makes a check, the Realtime Database is referenced.
 Database Read/Writes:
 
-Player identity: maybe use a random identity generator at the start of the game to differentiate players?
 Ship positions for individual ships
 shot_list
 hit_list
