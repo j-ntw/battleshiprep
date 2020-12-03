@@ -12,7 +12,7 @@ This project is a Battleship game meant to be played on 2 computers connected vi
 ## Technologies
 Project is created with:
 * Python 3.8.5
-* Pyrebase
+* random
 * matplotlib
 	
 ## Setup
