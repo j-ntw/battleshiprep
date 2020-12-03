@@ -1,6 +1,7 @@
 """Global Variables"""
 all_ships_dict = {"Carrier": 5 , "Battleship" : 4 , "Cruiser" : 3, "Submarine" : 3 , "Destroyer" : 2}
-shot_list = []
+shot_list_P1 = []
+shot_list_CPU = []
 ls_all_ships_points_P1 = []
 ls_all_ships_points_CPU = []
 
@@ -123,8 +124,7 @@ def generate_random_point_str():
 def place_stern_CPU(ship_name):
     stern_str = generate_random_point_str()
     return Point( stern_str[0] , stern_str[1] )  #returns stern coordinates as a Point object
-
-           
+    
 def generate_ship_sections_CPU(stern, ship_name, size ):
     ls_points = [stern]
     #Generating ships points based on random direction
@@ -183,23 +183,110 @@ def place_ship_CPU(ship_name):
         ls_all_ships_points_CPU.append(i)
     return [ship_name, ls_points]
 
+"""War Phase"""
+def check_score(enemy_ship_dict):  #check if all enemy ships sunk
+    score = 0
+    for ls_points in enemy_ship_dict.values():
+        if ls_points == []:
+            score +=1
+    return score
+    #check if any enemy ships were sunk
+  
 
+def attack(): #returns a Point object with a valid shot.
+    global shot_list_P1
+    verified_shot = False
+    while verified_shot == False:
+        shot_str = input("Attack coordinates? e.g. A0 ")
+        if check_valid_point_P1(shot_str, "Shot"): #check if string is garbage
+            shot = Point(shot[0].upper(), shot[1]) #save the shot as Point object
+            if shot in shot_list_P1:
+                print("You have taken this shot before! Choose another!") 
+                verified_shot = False
+            else:
+                print("Shooting...")
+                #sleep(3)
+                verified_shot = True
+        else:
+            verified_shot = False
+    shot_list_P1.append(shot)
+    return shot
+
+def attack_CPU(shot_str):
+    global shot_list_CPU
+
+    verified_shot = False
+    while verified_shot == False:
+        if random_shot 
+            shot = Point(shot[0].upper(), shot[1]) #save the shot as Point object
+            if shot in shot_list_P1:
+                print("You have taken this shot before! Choose another!") 
+                verified_shot = False
+            else:
+                print("Shooting...")
+                #sleep(3)
+                verified_shot = True
+        else:
+            verified_shot = False
+    shot_list_P1.append(shot)
+    return shot
+
+def check_hit(shot, enemy_ship_dict, enemy_ls_all_ships_points):
+    if shot not in enemy_ls_all_ships_points: #check if shot hit anything
+        print("You missed.")
+    else: #finds the enemy ship with the shot and removes it from their list
+        print("Shot to {} was succesful!".format(str(shot.x + shot.y)))
+        for ls_points in enemy_ship_dict.values():
+            if shot in ls_points:
+                ls_points.remove(shot)
+    
+"""main function"""
 def main():
+    game_not_over = True
     #Setting player ships
-    p1_ship_dict = {}
+    P1_ship_dict = {}
     CPU_ship_dict = {}
+    
     for ship_name in all_ships_dict:
         some_ship = place_ship_P1(ship_name)
         some_ship_name = some_ship[0]
         some_ls_points = some_ship[1]
-        p1_ship_dict[some_ship_name] = some_ls_points
+        P1_ship_dict[some_ship_name] = some_ls_points
         print("{} written to {}!".format(some_ls_points, some_ship_name))
     
     #Setting CPU ships
     for ship_name in all_ships_dict:
         some_ship_CPU = place_ship_CPU(ship_name)
+        some_ship_name = some_ship[0]
         some_ls_points = some_ship_CPU[1]
         CPU_ship_dict[some_ship_name] = some_ls_points
     
     #War Phase
-    
+    starting_player = random.choice(["P1", "CPU"])
+    if starting_player == "P1":
+        player_turn = True
+    else:
+        player_turn = False
+
+    while game_not_over:
+        if player_turn:
+            shot = attack()
+            check_hit(shot, CPU_ship_dict, ls_all_ships_points_CPU)
+            player_turn = False
+        else:
+            attack_CPU()
+            check_hit(shot, P1_ship_dict, ls_all_ships_points_P1)
+            player_turn = True
+        
+        #CPU checks for game end
+        CPU_score = check_score(P1_ship_dict)
+        P1_score = check_score(CPU_ship_dict)
+        if CPU_score == 5:
+            game_not_over == False # what if they are 5 at the same time
+        elif P1_score == 5:
+            game_not_over == False
+        else:
+            game_not_over == True
+
+
+main()
