@@ -250,7 +250,7 @@ def generate_add_shot(shot):
         elif direction == "W":
             add_shot_dict[Point(chr(ord(shot.x) + i) , shot.y)] = "W"
         elif direction == "S":
-            add_shot_dict["S"] = Point(shot.x, chr(ord(shot.y) + i))
+            add_shot_dict[Point(shot.x, chr(ord(shot.y) + i))] = 
         elif direction == "E":
             add_shot_dict["E"] = Point(chr(ord(shot.x) - i) , shot.y)
     
