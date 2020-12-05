@@ -308,6 +308,7 @@ def main():
         player_turn = False
 
     while game_not_over:
+        global round_num
         round_num += 1
         if player_turn:
             print("Player's Turn!")
