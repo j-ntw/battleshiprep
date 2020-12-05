@@ -5,7 +5,7 @@ shot_list_CPU = []
 ls_all_ships_points_P1 = []
 ls_all_ships_points_CPU = []
 CPU_target = []
-round_num = 0
+
 #Setup Phase
 class Point:
     def __init__(self, initX, initY):
@@ -30,9 +30,10 @@ def place_stern_P1(ship_name):
     
     while stern_bool == False :
         stern_str = input("Where would you like the stern of your {} to be? e.g. A0. 'I' is not valid.".format(ship_name))#A0
+        stern_str = stern_str.upper()
         stern_bool = check_valid_point_P1(stern_str, "Stern") #check if string is garbage
         if stern_bool == True:
-            return Point( stern_str[0].upper() , stern_str[1] )
+            return Point( stern_str[0] , stern_str[1] )
             #returns stern coordinates as a Point object
 
 def generate_ship_sections_P1(stern, ship_name, size ):
@@ -195,8 +196,9 @@ def attack(): #returns a Point object with a valid shot.
     verified_shot = False
     while verified_shot == False:
         shot_str = input("Attack coordinates? e.g. A0 ")
+        shot_str = shot_str.upper()
         if check_valid_point_P1(shot_str, "Shot"): #check if string is garbage
-            shot = Point(shot[0].upper(), shot[1]) #save the shot as Point object
+            shot = Point(shot_str[0], shot_str[1]) #save the shot as Point object
             if shot in shot_list_P1:
                 print("You have taken this shot before! Choose another!") 
                 verified_shot = False
@@ -220,7 +222,6 @@ def check_hit(shot, enemy_ship_dict, enemy_ls_all_ships_points):
 
 
 """CPU functions"""
-
 def attack_CPU_random():
     global shot_list_CPU
     verified_shot = False
@@ -237,7 +238,7 @@ def attack_CPU_random():
 
 def generate_add_shot(shot, valid_dir_ls):
     #Generating addiional strike locations as a dict with direction : Point
-    add_shot_dict = []
+    add_shot_dict = {}
     
     for direction in valid_dir_ls:
         if direction == "N":
@@ -249,32 +250,36 @@ def generate_add_shot(shot, valid_dir_ls):
         elif direction == "E":
             add_shot_dict[Point(chr(ord(shot.x) - i) , shot.y)] = "E"
     
-    for point, direction in add_shot_dict.items(): #should try subtractin away and use a dictionary. useful to know the direction to whack
+    for point, direction in add_shot_dict.items(): #should try subtracting away and use a dictionary. useful to know the direction to whack
         if (not check_valid_point_CPU(str(point.x + point.y))) or (point in shot_list_CPU):
             del add_shot_dict[point]
     return add_shot_dict
 
 def check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points, target_dict):
-    if shot in target_dict:
+    if shot in target_dict.keys():
         if shot not in enemy_ls_all_ships_points: #target miss
+            print("CPU missed.")
             #delete from target_dict and try another
             del target_dict[shot]
             return target_dict
         else: #target hit
-            for ls_points in enemy_ship_dict.values(): #finds the enemy ship with the shot and removes it from their list
+            for ship_name, ls_points in enemy_ship_dict.items(): #finds the enemy ship with the shot and removes it from their list
                 if shot in ls_points:
                     ls_points.remove(shot)
+                    print("CPU hit", ship_name, "at", str(shot.x) +str(shot.y))
             #delete from target_dict and attack in known direction
             shot_dir = target_dict[shot]
             return generate_add_shot(shot, [shot_dir])
             
     else: #check for random shot
         if shot not in enemy_ls_all_ships_points: #random shot miss
+            print("CPU missed.")
             return {}
         else: #random shot hit
-            for ls_points in enemy_ship_dict.values(): #finds the enemy ship with the shot and removes it from their list
+            for ship_name, ls_points in enemy_ship_dict.items(): #finds the enemy ship with the shot and removes it from their list
                 if shot in ls_points:
                     ls_points.remove(shot)
+                    print("CPU hit", ship_name, "at", str(shot.x) +str(shot.y))
             return generate_add_shot(shot, ["N", "S","E", "W"] ) #len 2 to 4
 
 """main function"""
@@ -283,6 +288,7 @@ def main():
     #Setting player ships
     P1_ship_dict = {}
     CPU_ship_dict = {}
+    round_num = 0
     
     for ship_name in all_ships_dict:
         some_ship = place_ship_P1(ship_name)
@@ -300,7 +306,6 @@ def main():
     
     #War Phase
     starting_player = random.choice(["P1", "CPU"])
-    add_shot_dict = {}
     target_dict = {}
     if starting_player == "P1":
         player_turn = True
@@ -308,8 +313,8 @@ def main():
         player_turn = False
 
     while game_not_over:
-        global round_num
         round_num += 1
+        print("Round", round_num)
         if player_turn:
             print("Player's Turn!")
             shot = attack()
@@ -320,7 +325,7 @@ def main():
             if target_dict == {}: #no targets
                 CPU_shot = attack_CPU_random()
             else: #attack CPU target
-                CPU_shot = random.choice(target_dict.values())
+                CPU_shot = random.choice(target_dict.keys())
             target_dict = check_hit_CPU(CPU_shot, P1_ship_dict, ls_all_ships_points_P1, target_dict) #update target_dict
             #pseudo code
             #if hit set last_CPU_ target = "hit"
@@ -336,7 +341,6 @@ def main():
             print("You won!")
             game_not_over == False
         else:
-            print("Round", round_num)
             game_not_over == True
 
 
