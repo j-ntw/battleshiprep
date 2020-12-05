@@ -5,7 +5,7 @@ shot_list_CPU = []
 ls_all_ships_points_P1 = []
 ls_all_ships_points_CPU = []
 CPU_target = []
-
+round_num = 0
 #Setup Phase
 class Point:
     def __init__(self, initX, initY):
@@ -78,7 +78,6 @@ def check_ship_sections_P1(ship_name, ls_points):
             continue
     return points_valid
 
-
 def place_ship_P1(ship_name):
     global all_ships_dict
     global ls_all_ships_points_P1 # necessary to check if current ship conflicts with previously placed ship
@@ -104,7 +103,6 @@ def place_ship_P1(ship_name):
     return [ship_name, ls_points]
 
 """CPU setup"""
-
 def check_valid_point_CPU(point_str):
     #Check if thing is within the board using ASCII index
     if (ord(point_str[0]) > 75 or ord(point_str[0]) < 65 or ord(point_str[1]) > 57 or ord(point_str[1]) < 48): 
@@ -159,7 +157,6 @@ def check_ship_sections_CPU(ship_name, ls_points):
             continue
     return points_valid
 
-
 def place_ship_CPU(ship_name):
     global all_ships_dict
     global ls_all_ships_points_CPU # necessary to check if current ship conflicts with previously placed ship
@@ -186,15 +183,13 @@ def place_ship_CPU(ship_name):
 
 """War Phase"""
 """P1 functions"""
-def check_score(enemy_ship_dict):  #check if all enemy ships sunk
+def check_score(enemy_ship_dict):  #check if any enemy ships were sunk
     score = 0
     for ls_points in enemy_ship_dict.values():
         if ls_points == []:
             score +=1
     return score
-    #check if any enemy ships were sunk
-  
-
+    
 def attack(): #returns a Point object with a valid shot.
     global shot_list_P1
     verified_shot = False
@@ -223,6 +218,7 @@ def check_hit(shot, enemy_ship_dict, enemy_ls_all_ships_points):
             if shot in ls_points:
                 ls_points.remove(shot)
 
+
 """CPU functions"""
 
 def attack_CPU_random():
@@ -230,60 +226,56 @@ def attack_CPU_random():
     verified_shot = False
     while verified_shot == False:
         shot_str = generate_random_point_str()
-        shot = Point(shot[0], shot[1]) #save the shot as Point object
+        shot = Point(shot_str[0], shot_str[1]) #save the shot as Point object
         if shot in shot_list_CPU:
             verified_shot = False
         else:
             print("CPU shooting...")
-            #sleep(3)
             verified_shot = True
     shot_list_CPU.append(shot)
     return shot
 
-def generate_add_shot(shot):
+def generate_add_shot(shot, valid_dir_ls):
     #Generating addiional strike locations as a dict with direction : Point
     add_shot_dict = []
-    valid_dir_ls = ["N", "S","E", "W"]
+    
     for direction in valid_dir_ls:
         if direction == "N":
             add_shot_dict[Point(shot.x, chr(ord(shot.y) - i))] = "N"
         elif direction == "W":
             add_shot_dict[Point(chr(ord(shot.x) + i) , shot.y)] = "W"
         elif direction == "S":
-            add_shot_dict[Point(shot.x, chr(ord(shot.y) + i))] = 
+            add_shot_dict[Point(shot.x, chr(ord(shot.y) + i))] = "S"
         elif direction == "E":
-            add_shot_dict["E"] = Point(chr(ord(shot.x) - i) , shot.y)
+            add_shot_dict[Point(chr(ord(shot.x) - i) , shot.y)] = "E"
     
-    for direction, point in add_shot_dict.items(): #should try subtractin away and use a dictionary. useful to know the direction to whack
-        if (not check_valid_point_CPU(str(point.x + point.y))) or in shot_list_CPU:
-            del add_shot_dict[direction]
+    for point, direction in add_shot_dict.items(): #should try subtractin away and use a dictionary. useful to know the direction to whack
+        if (not check_valid_point_CPU(str(point.x + point.y))) or (point in shot_list_CPU):
+            del add_shot_dict[point]
     return add_shot_dict
 
-          
-def attack_CPU_target(add_shot_dict):
-    shot = add_shot_dict
-    return shot
-
-
-
-def check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points):
-    if shot not in enemy_ls_all_ships_points: #check if shot hit anything
-        no_target = True
-        #try to take it away from the additional shot ls
-    else: 
-        #Target enemy location
-        no_target = False
-        #finds the enemy ship with the shot and removes it from their list
-        for ls_points in enemy_ship_dict.values():
-            if shot in ls_points:
-                ls_points.remove(shot)
-        #check possible shot locations
-        add_shot_dict = generate_add_shot(shot)
-        
-        
-    return no_target, add_shot_dict
-    #adds it to target, target direction
-
+def check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points, target_dict):
+    if shot in target_dict:
+        if shot not in enemy_ls_all_ships_points: #target miss
+            #delete from target_dict and try another
+            del target_dict[shot]
+            return target_dict
+        else: #target hit
+            for ls_points in enemy_ship_dict.values(): #finds the enemy ship with the shot and removes it from their list
+                if shot in ls_points:
+                    ls_points.remove(shot)
+            #delete from target_dict and attack in known direction
+            shot_dir = target_dict[shot]
+            return generate_add_shot(shot, [shot_dir])
+            
+    else: #check for random shot
+        if shot not in enemy_ls_all_ships_points: #random shot miss
+            return {}
+        else: #random shot hit
+            for ls_points in enemy_ship_dict.values(): #finds the enemy ship with the shot and removes it from their list
+                if shot in ls_points:
+                    ls_points.remove(shot)
+            return generate_add_shot(shot, ["N", "S","E", "W"] ) #len 2 to 4
 
 """main function"""
 def main():
@@ -316,31 +308,34 @@ def main():
         player_turn = False
 
     while game_not_over:
+        round_num += 1
         if player_turn:
+            print("Player's Turn!")
             shot = attack()
             check_hit(shot, CPU_ship_dict, ls_all_ships_points_CPU)
             player_turn = False
         else:
-            
-            if target_dict == {}:
-                shot = attack_CPU()
-            elif target_dict != {} and last_CPU_target == "hit": #attack CPU target
-                CPU_shot = random.choice(add_shot_dict.values())
-                shot_dir = add_shot_dict.popitem(shot)[0]
-                del add_shot_dict[shot_dir]
-            check_hit_CPU(CPU_shot, P1_ship_dict, ls_all_ships_points_P1)
+            print("CPU's Turn!")
+            if target_dict == {}: #no targets
+                CPU_shot = attack_CPU_random()
+            else: #attack CPU target
+                CPU_shot = random.choice(target_dict.values())
+            target_dict = check_hit_CPU(CPU_shot, P1_ship_dict, ls_all_ships_points_P1, target_dict) #update target_dict
             #pseudo code
             #if hit set last_CPU_ target = "hit"
-                player_turn = True
+            player_turn = True
         
         #CPU checks for game end
         CPU_score = check_score(P1_ship_dict)
         P1_score = check_score(CPU_ship_dict)
         if CPU_score == 5:
+            print("You lost!")
             game_not_over == False # what if they are 5 at the same time
         elif P1_score == 5:
+            print("You won!")
             game_not_over == False
         else:
+            print("Round", round_num)
             game_not_over == True
 
 
