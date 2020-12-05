@@ -309,7 +309,7 @@ def main():
     #War Phase
     starting_player = random.choice(["P1", "CPU"])
     add_shot_dict = {}
-    no_target = True
+    target_dict = {}
     if starting_player == "P1":
         player_turn = True
     else:
@@ -322,14 +322,15 @@ def main():
             player_turn = False
         else:
             
-            if no_target:
+            if target_dict == {}:
                 shot = attack_CPU()
-            else: #attack CPU target
-                shot = random.choice(add_shot_dict.values())
+            elif target_dict != {} and last_CPU_target == "hit": #attack CPU target
+                CPU_shot = random.choice(add_shot_dict.values())
                 shot_dir = add_shot_dict.popitem(shot)[0]
                 del add_shot_dict[shot_dir]
-            check_hit_CPU(shot, P1_ship_dict, ls_all_ships_points_P1)
-
+            check_hit_CPU(CPU_shot, P1_ship_dict, ls_all_ships_points_P1)
+            #pseudo code
+            #if hit set last_CPU_ target = "hit"
                 player_turn = True
         
         #CPU checks for game end
