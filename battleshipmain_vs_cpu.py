@@ -11,7 +11,9 @@ class Point:
     def __init__(self, initX, initY):
         self.x = initX
         self.y = initY
-
+"""Board Setup"""
+def initialise_board():
+    pass
 """P1 Setup"""
 def check_valid_point_P1(point_str, thing):
     #returns False if string is in invalid format, True if valid.
@@ -242,13 +244,13 @@ def generate_add_shot(shot, valid_dir_ls):
     
     for direction in valid_dir_ls:
         if direction == "N":
-            add_shot_dict[Point(shot.x, chr(ord(shot.y) - i))] = "N"
+            add_shot_dict[Point(shot.x, chr(ord(shot.y) - 1))] = "N"
         elif direction == "W":
-            add_shot_dict[Point(chr(ord(shot.x) + i) , shot.y)] = "W"
+            add_shot_dict[Point(chr(ord(shot.x) + 1) , shot.y)] = "W"
         elif direction == "S":
-            add_shot_dict[Point(shot.x, chr(ord(shot.y) + i))] = "S"
+            add_shot_dict[Point(shot.x, chr(ord(shot.y) + 1))] = "S"
         elif direction == "E":
-            add_shot_dict[Point(chr(ord(shot.x) - i) , shot.y)] = "E"
+            add_shot_dict[Point(chr(ord(shot.x) - 1) , shot.y)] = "E"
     
     for point, direction in add_shot_dict.items(): #should try subtracting away and use a dictionary. useful to know the direction to whack
         if (not check_valid_point_CPU(str(point.x + point.y))) or (point in shot_list_CPU):
