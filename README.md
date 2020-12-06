@@ -16,7 +16,7 @@ Project is created with:
 * matplotlib
 	
 ## Setup
-To run this project, run battleshipmain.py along with the corresponding modules in the same folder.
+To run this project, run battleshipmain_vs_cpu.py alone.
 
 There are 2 phases: 
 1. Setup Phase
@@ -57,28 +57,3 @@ If Player 1 has no remaining ships
     Player 2 wins
 else
     Player 2 ends turn, Player 1 turn starts
-
-
-CPU checks:
-Setup Phase:
-    ships are in one piece not separate (may be difficult),
-    Horizontal or Vertical only, 
-    no overlap of ships,
-    all ships within the board (length check),
-    no change in position once War Phase starts
-War Phase:
-    If Hit
-        change state of that ship section from 1 to dead
-    else
-        (miss) change state of tile from -
-
-Each time the board changes state or the CPU makes a check, the Realtime Database is referenced.
-Database Read/Writes:
-
-Ship positions for individual ships
-shot_list
-hit_list
-destroyed ship list for each player
-
-ability to replay the game
-SALVO game type
