@@ -12,8 +12,51 @@ class Point:
         self.x = initX
         self.y = initY
 """Board Setup"""
-def initialise_board():
-    pass
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
+board =plt.figure(figsize=[9,9])
+board.patch.set_facecolor((1,1,.8))
+ax = board.add_subplot(111)
+
+# draw the grid
+for x in range(11):
+    ax.plot([x, x], [0,10], 'k')
+for y in range(11):
+    ax.plot([0, 10], [y,y], 'k')
+
+# scale the axis area to fill the whole figure
+ax.set_position([0,0,1,1])
+
+# get rid of axes and everything (the figure background will show through)
+ax.set_axis_off()
+
+# scale the plot area conveniently (the board is in 0,0..18,18)
+ax.set_xlim(-1,11)
+ax.set_ylim(-1,11)
+
+# add axis labels to the axes
+x_axis_letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'] #x-axis names for plotting
+for i in range(10):
+  ax.text(i+0.4, -0.4, x_axis_letters[i])
+  ax.text(-0.4, i+0.4, list(range(10))[i])
+
+def turn_black(draw_ls):
+    #given a list of Point objects, show the board
+
+    for square_point in draw_ls:
+        chosen_square = str(square_point.x + square_point.y)
+         #make a dictionary: key = input letter, value = what it would mean as an x-coordinate
+        letter_to_xcoord_dict = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'J': 8, 'K': 9}
+         #convert the letter into an x-coordinate number
+        chosen_xcoord = letter_to_xcoord_dict[chosen_square[0]]
+        square_tup = (chosen_xcoord, int(chosen_square[1]))
+        print(square_tup)
+         # create a black rectangle patch at (coord.x, coord.y)
+        rect = patches.Rectangle( square_tup, 1, 1, angle = 0.0, facecolor = 'k')
+         # add the patch to the axes
+        ax.add_patch(rect)
+
 """P1 Setup"""
 def check_valid_point_P1(point_str, thing):
     #returns False if string is in invalid format, True if valid.
@@ -298,6 +341,8 @@ def main():
         some_ls_points = some_ship[1]
         P1_ship_dict[some_ship_name] = some_ls_points
         print("{} written to {}!".format(some_ls_points, some_ship_name))
+        turn_black(ls_all_ships_points_P1)
+        plt.show()
     
     #Setting CPU ships
     for ship_name in all_ships_dict:
