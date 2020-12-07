@@ -141,6 +141,18 @@ def generate_ship_sections_P1(stern, ship_name, size ):
         else:
             print("Please type [N/S/E/W/X]!")
             direction_bool = False
+    #handles the case where "I" is generated
+    for point in ls_points:
+        if point[0] == "I":
+            exception_point = point
+    try:
+        ls_points.remove(exception_point)
+        if direction == "W":
+            ls_points.append(chr(ord(stern[0]) - size) + stern[1])
+        elif direction == "E":
+            ls_points.append(chr(ord(stern[0]) + size) + stern[1])
+    except:
+        pass
     return ls_points
 
 """check_ship_sections_P1 : Check if all points within ls_points are valid (within board and not overlapping other ships) Similar to check_valid_point_P1 but for ls_points instead of place_stern_P1"""
@@ -223,11 +235,24 @@ def generate_ship_sections_CPU(stern, ship_name, size, valid_dir_ls):
         if direction == "N":
             ls_points.append(stern[0] + chr(ord(stern[1]) - i))
         elif direction == "W":
-            ls_points.append(chr(ord(stern[0]) + i) + stern[1])
+            ls_points.append(chr(ord(stern[0]) - i) + stern[1])
         elif direction == "S":
             ls_points.append(stern[0] + chr(ord(stern[1]) + i))
         elif direction == "E":
-            ls_points.append(chr(ord(stern[0]) - i) + stern[1])
+            ls_points.append(chr(ord(stern[0]) + i) + stern[1])
+    print(ls_points)
+    #handles the case where "I" is generated
+    for point in ls_points:
+        if point[0] == "I":
+            exception_point = point
+    try:
+        ls_points.remove(exception_point)
+        if direction == "W":
+            ls_points.append(chr(ord(stern[0]) - size) + stern[1])
+        elif direction == "E":
+            ls_points.append(chr(ord(stern[0]) + size) + stern[1])
+    except:
+        pass
     return [ls_points, direction]
 
 def check_ship_sections_CPU(ship_name, ls_points):
@@ -239,7 +264,7 @@ def check_ship_sections_CPU(ship_name, ls_points):
             points_valid = False
             break
         #check if point conflicts with another ship's points
-        elif point in ls_all_ships_points_P1:
+        elif point in ls_all_ships_points_CPU:
             points_valid = False
             break
         else:
@@ -272,6 +297,7 @@ def place_ship_CPU(ship_name):
     
     for i in ls_points: #add the ship's points to list of known ships points
         ls_all_ships_points_CPU.append(i)
+    print([ship_name, ls_points])
     return [ship_name, ls_points]
 
 """War Phase: Player 1"""
@@ -313,9 +339,10 @@ def check_hit(shot, enemy_ship_dict, enemy_ls_all_ships_points):
         print("Shot to {} was succesful!".format(shot) )
         draw_rectangle_war(shot, 'red') #Display hit as red square
         plt.show(block = False)
-        for ls_points in enemy_ship_dict.values():
+        for ship_name, ls_points in enemy_ship_dict.items():
             if shot in ls_points:
                 ls_points.remove(shot)
+                enemy_ship_dict[ship_name] = ls_points
 
 """War Phase: CPU"""
 def attack_CPU_random():
@@ -389,7 +416,7 @@ def main():
     P1_ship_dict = {}
     CPU_ship_dict = {}
     round_num = 0
-    
+    """
     for ship_name in all_ships_dict:
         some_ship = place_ship_P1(ship_name)
         plt.draw()
@@ -398,11 +425,11 @@ def main():
         P1_ship_dict[some_ship_name] = some_ls_points
         print("{} written to {}!".format(some_ls_points, some_ship_name))
         plt.show(block = False)   
-
+"""
     #Setting CPU ships
     for ship_name in all_ships_dict:
         some_ship_CPU = place_ship_CPU(ship_name)
-        some_ship_name = some_ship[0]
+        some_ship_name = some_ship_CPU[0]
         some_ls_points = some_ship_CPU[1]
         CPU_ship_dict[some_ship_name] = some_ls_points
     
@@ -446,6 +473,7 @@ def main():
         elif P1_score == 5:
             print("You won!")
             game_not_over = False
+            plt.show()
         else:
             game_not_over = True
 
