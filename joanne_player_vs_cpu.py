@@ -240,7 +240,6 @@ def generate_ship_sections_CPU(stern, ship_name, size, valid_dir_ls):
             ls_points.append(stern[0] + chr(ord(stern[1]) + i))
         elif direction == "E":
             ls_points.append(chr(ord(stern[0]) + i) + stern[1])
-    print(ls_points)
     #handles the case where "I" is generated
     for point in ls_points:
         if point[0] == "I":
@@ -293,11 +292,10 @@ def place_ship_CPU(ship_name):
         else:
             valid_dir_ls.remove(direction) #CPU will not try this direction again.
 
-    print("Ship placed!") #CPU placed ship
+    print("{} placed!".format(ship_name)) #CPU placed ship
     
     for i in ls_points: #add the ship's points to list of known ships points
         ls_all_ships_points_CPU.append(i)
-    print([ship_name, ls_points])
     return [ship_name, ls_points]
 
 """War Phase: Player 1"""
@@ -321,13 +319,11 @@ def attack(): #returns a valid shot.
                 verified_shot = False
             else:
                 print("Shooting...")
-                #sleep(3)
                 verified_shot = True
         else:
             verified_shot = False
             print("Please enter valid coordinates! e.g. B1")
     shot_list_P1.append(shot)
-    print(shot_list_P1)
     return shot
 
 def check_hit(shot, enemy_ship_dict, enemy_ls_all_ships_points):
@@ -416,7 +412,7 @@ def main():
     P1_ship_dict = {}
     CPU_ship_dict = {}
     round_num = 0
-    """
+    
     for ship_name in all_ships_dict:
         some_ship = place_ship_P1(ship_name)
         plt.draw()
@@ -425,7 +421,7 @@ def main():
         P1_ship_dict[some_ship_name] = some_ls_points
         print("{} written to {}!".format(some_ls_points, some_ship_name))
         plt.show(block = False)   
-"""
+
     #Setting CPU ships
     for ship_name in all_ships_dict:
         some_ship_CPU = place_ship_CPU(ship_name)
