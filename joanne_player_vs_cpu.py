@@ -105,7 +105,7 @@ def generate_ship_sections_P1(stern, ship_name, size ):
         #Generating ships points based on direction
         direction = input("Which direction would you like your {} to face? Type 'X' to choose another point. [N/S/E/W/X] ".format(ship_name))
         direction = direction.upper()
-        if direction in "NSEW":
+        if direction in "NSEWX":
             for i in range(1, size):
                 if direction == "N":
                     ls_points.append(stern[0] + chr(ord(stern[1]) - i))
@@ -119,7 +119,7 @@ def generate_ship_sections_P1(stern, ship_name, size ):
                     return "X"
             direction_bool = True
         else:
-            print("Please type [N/S/E/W]!")
+            print("Please type [N/S/E/W/X]!")
             direction_bool = False
 
     for point in ls_points:
@@ -158,7 +158,7 @@ def place_ship_P1(ship_name):
         stern = place_stern_P1(ship_name, all_ships_dict[ship_name]) #ask player for stern position
         #generate list of ship points based on known stern and requested direction
         ls_points = generate_ship_sections_P1(stern, ship_name, size)
-        if ls_points = "X":
+        if ls_points == "X":
             ship_placed = False
             points_valid = False
         else:
