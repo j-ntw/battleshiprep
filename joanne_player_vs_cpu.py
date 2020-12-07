@@ -47,17 +47,9 @@ for i in range(10):
 """Matplotlib draw_rectangle function : Changes a square's colour to black, grey or red"""
 
 def draw_rectangle(chosen_xcoord, chosen_ycoord, colour):
-    if colour == 'b': # makes the square turn black
-        rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor='black') #ship points
-        ax.add_patch(rect)
-    elif colour == 'r': # makes the square turn red
-        rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor='red') #hit
-        ax.add_patch(rect)
-    elif colour == 'g': # makes the square turn grey
-        rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor='grey') #miss
-        ax.add_patch(rect)
-    # add the patch to the axes
-    
+    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = str(colour)) #ship points
+    show_rect = ax.add_patch(rect) # add the patch to the axes
+    return show_rect
 
 """Player 1 Set-Up
 
@@ -89,7 +81,12 @@ def place_stern_P1(ship_name, ship_length):
         stern = stern.upper()
         stern_bool = check_valid_point_P1(stern, "Stern") #check if string is garbage
         if stern_bool == True:
-            draw_rectangle(stern[0], stern[1], 'black') #display stern as black square
+            #make a dictionary: key = input letter, value = what it would mean as an x-coordinate
+            letter_to_xcoord_dict = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'J': 8, 'K': 9}
+            #convert the letter into an x-coordinate number
+            chosen_xcoord = letter_to_xcoord_dict[stern[0]]
+            draw_rectangle(chosen_xcoord, int(stern[1]), 'black') #display stern as black square
+            plt.show(block = False)
             return stern
             #returns stern coordinates as a string
         else:
@@ -168,7 +165,14 @@ def place_ship_P1(ship_name):
     
     for i in ls_points: #add the ship's points to list of known ships points
         ls_all_ships_points_P1.append(i)
-        draw_rectangle(i[0], i[1], 'black') #display ships as black squares
+
+        #make a dictionary: key = input letter, value = what it would mean as an x-coordinate
+        letter_to_xcoord_dict = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'J': 8, 'K': 9}
+        #convert the letter into an x-coordinate number
+        chosen_xcoord = letter_to_xcoord_dict[i[0]]
+        draw_rectangle(chosen_xcoord, int(i[1]), 'black') #display ships as black squares
+        plt.show(block = False)
+        print('Rectangles drawn.')
     return [ship_name, ls_points]
 
 
@@ -360,11 +364,12 @@ def main():
     
     for ship_name in all_ships_dict:
         some_ship = place_ship_P1(ship_name)
+        plt.draw()
+        print('Plot Shown.')
         some_ship_name = some_ship[0]
         some_ls_points = some_ship[1]
         P1_ship_dict[some_ship_name] = some_ls_points
         print("{} written to {}!".format(some_ls_points, some_ship_name))
-        plt.show(block = False)
     
     #Setting CPU ships
     for ship_name in all_ships_dict:
