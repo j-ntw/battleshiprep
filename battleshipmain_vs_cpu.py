@@ -15,7 +15,7 @@ class Point:
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-board =plt.figure(figsize=[9,9])
+board = plt.figure(figsize=[9,9])
 board.patch.set_facecolor((1,1,.8))
 ax = board.add_subplot(111)
 
@@ -268,7 +268,6 @@ def check_hit(shot, enemy_ship_dict, enemy_ls_all_ships_points):
 
 """CPU functions"""
 def attack_CPU_random():
-    global shot_list_CPU
     verified_shot = False
     while verified_shot == False:
         shot_str = generate_random_point_str()
@@ -278,7 +277,6 @@ def attack_CPU_random():
         else:
             print("CPU shooting...")
             verified_shot = True
-    shot_list_CPU.append(shot)
     return shot
 
 def generate_add_shot(shot, valid_dir_ls):
@@ -374,8 +372,7 @@ def main():
             else: #attack CPU target
                 CPU_shot = random.choice(target_dict.keys())
             target_dict = check_hit_CPU(CPU_shot, P1_ship_dict, ls_all_ships_points_P1, target_dict) #update target_dict
-            #pseudo code
-            #if hit set last_CPU_ target = "hit"
+            shot_list_CPU.append(CPU_shot)
             player_turn = True
         
         #CPU checks for game end
