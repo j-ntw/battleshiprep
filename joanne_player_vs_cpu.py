@@ -11,7 +11,7 @@ shot_list_CPU = []
 ls_all_ships_points_P1 = []
 ls_all_ships_points_CPU = []
 CPU_target = []
-
+bride = []
 
 """Initialise matplotlib board"""
 
