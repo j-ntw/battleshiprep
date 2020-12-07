@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-board =plt.figure(figsize=[8,8])
+board = plt.figure(figsize=[8,8])
 board.patch.set_facecolor((1,1,.8))
 ax = board.add_subplot(111)
 
