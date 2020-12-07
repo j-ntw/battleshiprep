@@ -46,25 +46,11 @@ for i in range(10):
     ax.text(i+0.4, 10.2, x_axis_letters[i])
     ax.text(-0.4, 9.4-i, list(range(10))[i])
 
-"""Matplotlib draw_rectangle function : Changes a square's colour to black, grey or red"""
-
+"""Matplotlib draw_rectangle function : Changes a square's colour to black, grey or red"""    
 def draw_rectangle(point, colour):
-    #convert the letter into an x-coordinate number
+    #convert the letter into an x-coordinate number, and swap the number index
     chosen_xcoord = letter_to_xcoord_dict[point[0]]
     chosen_ycoord = point_to_ycoord_dict[point[1]]
-    
-    if colour == 'b': # makes the square turn black
-        rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor='black') #ship points
-        ax.add_patch(rect)
-    elif colour == 'r': # makes the square turn red
-        rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor='red') #hit
-        ax.add_patch(rect)
-    elif colour == 'g': # makes the square turn grey
-        rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor='grey') #miss
-        ax.add_patch(rect)
-    # add the patch to the axes
-    
-def draw_rectangle(chosen_xcoord, chosen_ycoord, colour):
     rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = str(colour)) #ship points
     show_rect = ax.add_patch(rect) # add the patch to the axes
     return show_rect
@@ -99,12 +85,7 @@ def place_stern_P1(ship_name, ship_length):
         stern = stern.upper()
         stern_bool = check_valid_point_P1(stern, "Stern") #check if string is garbage
         if stern_bool == True:
-            draw_rectangle(int(stern[0]), int(stern[1]), 'black') #display stern as black square
-            #make a dictionary: key = input letter, value = what it would mean as an x-coordinate
-            letter_to_xcoord_dict = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'J': 8, 'K': 9}
-            #convert the letter into an x-coordinate number
-            chosen_xcoord = letter_to_xcoord_dict[stern[0]]
-            draw_rectangle(chosen_xcoord, int(stern[1]), 'black') #display stern as black square
+            draw_rectangle(stern, 'black') #display stern as black square
             plt.show(block = False)
             return stern
             #returns stern coordinates as a string
@@ -139,7 +120,7 @@ def generate_ship_sections_P1(stern, ship_name, size ):
             direction_bool = False
 
     for point in ls_points:
-      draw_rectangle(point[0], point[1], 'black') #display ship as black squares     
+      draw_rectangle(point, 'black') #display ship as black squares     
     return ls_points
 
 """**check_ship_sections_P1 : Check if all points within ls_points are valid (within board and not overlapping other ships)** Similar to check_valid_point_P1 but for ls_points instead of place_stern_P1"""
@@ -189,12 +170,7 @@ def place_ship_P1(ship_name):
     
     for i in ls_points: #add the ship's points to list of known ships points
         ls_all_ships_points_P1.append(i)
-
-        #make a dictionary: key = input letter, value = what it would mean as an x-coordinate
-        letter_to_xcoord_dict = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'J': 8, 'K': 9}
-        #convert the letter into an x-coordinate number
-        chosen_xcoord = letter_to_xcoord_dict[i[0]]
-        draw_rectangle(chosen_xcoord, int(i[1]), 'black') #display ships as black squares
+        draw_rectangle(i, 'black') #display ships as black squares
         plt.show(block = False)
         print('Rectangles drawn.')
     return [ship_name, ls_points]
@@ -306,10 +282,10 @@ def attack(): #returns a valid shot.
 def check_hit(shot, enemy_ship_dict, enemy_ls_all_ships_points):
     if shot not in enemy_ls_all_ships_points: #check if shot hit anything
         print("You missed.")
-        draw_rectangle(shot[0], shot[1], 'grey')
+        draw_rectangle(shot, 'grey')
     else: #finds the enemy ship with the shot and removes it from their list
         print("Shot to {} was succesful!".format(shot) )
-        draw_rectangle(shot[0], shot[1], 'red')
+        draw_rectangle(shot, 'red')
         for ls_points in enemy_ship_dict.values():
             if shot in ls_points:
                 ls_points.remove(shot)
