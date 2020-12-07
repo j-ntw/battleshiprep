@@ -1,9 +1,3 @@
-"""CDT 1D Project (Player vs CPU).ipynb
-
-Original file is located at
-    https://colab.research.google.com/drive/12Dwgjhpcj9YJ0E3_7TBHte6XTNIQue90
-"""
-
 """Global Variables"""
 all_ships_dict = {"Carrier": 5 , "Battleship" : 4 , "Cruiser" : 3, "Submarine" : 3 , "Destroyer" : 2}
 shot_list_P1 = []
@@ -12,8 +6,8 @@ ls_all_ships_points_P1 = []
 ls_all_ships_points_CPU = []
 CPU_target = []
 #make a dictionary: key = input letter, value = what it would mean as an x-coordinate
-letter_to_xcoord_dict = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'J': 8, 'K': 9}
-point_to_ycoord_dict = { "9":0, "8":1, "7":2, "6":3, "5":4, "4":5, "3":6, "2":7, "1":8, "0":9}
+letter_to_xcoord_dict = { 'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'J': 8, 'K': 9 }
+point_to_ycoord_dict = { "9" : 0, "8" : 1, "7" : 2, "6" : 3, "5" : 4, "4" : 5, "3" : 6, "2" : 7, "1" : 8, "0" : 9 }
 
 """Initialise matplotlib board"""
 
@@ -22,8 +16,10 @@ import matplotlib.patches as patches
 
 board = plt.figure(figsize = [6,6])
 board.patch.set_facecolor((1,1,.8))
-ax_setup = board.add_subplot(221)
-ax_war = board.add_subplot(222)
+board.tight_layout()
+board.subplots_adjust(right = 0.5)
+ax_setup = board.add_subplot(2, 1, 1)
+ax_war = board.add_subplot(2, 1, 2)
 
 # draw the grid
 for x in range(11):
@@ -34,8 +30,8 @@ for y in range(11):
     ax_war.plot([0, 10], [y,y], 'k')
 
 # scale the axis area to fill the whole figure
-ax_setup.set_position([0,0,1,1])
-ax_war.set_position([1,0,1,1])
+ax_setup.set_position([0,0.5,0.5,0.5])
+ax_war.set_position([0,0,0.5,0.5])
 
 # get rid of axes and everything (the figure background will show through)
 ax_setup.set_axis_off()
@@ -58,6 +54,7 @@ for i in range(10):
 # add titles to the boards
 ax_setup.text(4,-0.5,'Your Board')
 ax_war.text(4,-0.5,'CPU\'s Board')
+plt.show(block = False)
 
 """Matplotlib draw_rectangle_setup function : Changes a square's colour to black"""    
 def draw_rectangle_setup(point):
@@ -102,14 +99,12 @@ def check_valid_point_P1(point, thing):
     else:
         return True
 
-"""place_stern_P1 : Place stern by asking for user input
-"""
-
+"""place_stern_P1 : Place stern by asking for user input"""
 def place_stern_P1(ship_name, ship_length):
     stern_bool = False
     
     while stern_bool == False :
-        stern = input("Where would you like the stern of your {} ({}) to be? e.g. A0. 'I' is not valid.".format(ship_name, ship_length))#A0
+        stern = input("Where would you like the stern of your {} (Length: {}) to be? e.g. A0. 'I' is not valid.".format(ship_name, ship_length))#A0
         stern = stern.upper()
         stern_bool = check_valid_point_P1(stern, "Stern") #check if string is garbage
         if stern_bool == True:
@@ -120,7 +115,7 @@ def place_stern_P1(ship_name, ship_length):
         else:
             print("Please enter valid coordinates! e.g. B1")
 
-"""**generate_ship_sections_P1 : Generates a list of points containing the shape of the ship, depending on ship_name** Returns the list of points ls_points"""
+"""generate_ship_sections_P1 : Generates a list of points containing the shape of the ship, depending on ship_name Returns the list of points ls_points"""
 
 def generate_ship_sections_P1(stern, ship_name, size ):
     direction_bool = False
@@ -148,7 +143,7 @@ def generate_ship_sections_P1(stern, ship_name, size ):
             direction_bool = False
     return ls_points
 
-"""**check_ship_sections_P1 : Check if all points within ls_points are valid (within board and not overlapping other ships)** Similar to check_valid_point_P1 but for ls_points instead of place_stern_P1"""
+"""check_ship_sections_P1 : Check if all points within ls_points are valid (within board and not overlapping other ships) Similar to check_valid_point_P1 but for ls_points instead of place_stern_P1"""
 
 def check_ship_sections_P1(ship_name, ls_points):
     points_valid = True
@@ -157,7 +152,7 @@ def check_ship_sections_P1(ship_name, ls_points):
         #if point is out of board, break for loop
         if not check_valid_point_P1(point, ship_name):
             points_valid = False
-            print("Choose another direction, ya ship's hangin' off the board ya dingus")
+            print("Choose another direction, {} out of board!".format(ship_name))
             break
         #check if point conflicts with another ship's points
         elif point in ls_all_ships_points_P1:
@@ -168,7 +163,7 @@ def check_ship_sections_P1(ship_name, ls_points):
             continue
     return points_valid
 
-"""**place_ship_P1 : Matches ls_points to ship_name in global list ls_all_ships_points_P1** Uses results of check_valid_point_P1 and check_ship_sections_P1, and points from place_stern_P1 and generate_ship_sections_P1"""
+"""place_ship_P1 : Matches ls_points to ship_name in global list ls_all_ships_points_P1** Uses results of check_valid_point_P1 and check_ship_sections_P1, and points from place_stern_P1 and generate_ship_sections_P1"""
 
 def place_ship_P1(ship_name):
     global all_ships_dict
@@ -220,7 +215,7 @@ def generate_random_point():
             ls_valid_points.append(char+num)
     return random.choice(ls_valid_points)
     
-def generate_ship_sections_CPU(stern, ship_name, size, valid_dir_ls ):
+def generate_ship_sections_CPU(stern, ship_name, size, valid_dir_ls):
     ls_points = [stern]
     #Generating ships points based on random direction
     direction = random.choice(valid_dir_ls)
@@ -279,8 +274,7 @@ def place_ship_CPU(ship_name):
         ls_all_ships_points_CPU.append(i)
     return [ship_name, ls_points]
 
-"""# War Phase: Player 1
-"""
+"""War Phase: Player 1"""
 
 def check_score(enemy_ship_dict):  #check if any enemy ships were sunk
     score = 0
@@ -323,7 +317,7 @@ def check_hit(shot, enemy_ship_dict, enemy_ls_all_ships_points):
             if shot in ls_points:
                 ls_points.remove(shot)
 
-"""# War Phase: CPU"""
+"""War Phase: CPU"""
 def attack_CPU_random():
     verified_shot = False
     while verified_shot == False:
@@ -387,12 +381,7 @@ def check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points, target_dict)
                     plt.show(block = False)
             return generate_add_shot(shot, ["N", "S","E", "W"] ) #len 2 to 4
 
-"""# Main Function
-
-**main : Puts everything together**
-"""
-
-"""main function"""
+"""Main Function: Puts everything together"""
 def main():
     plt.show(block = False)
     game_not_over = True
