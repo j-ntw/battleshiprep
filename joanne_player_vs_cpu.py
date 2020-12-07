@@ -12,10 +12,7 @@ ls_all_ships_points_P1 = []
 ls_all_ships_points_CPU = []
 CPU_target = []
 
-class Point:
-    def __init__(self, initX, initY):
-        self.x = initX
-        self.y = initY
+
 """Initialise matplotlib board"""
 
 import matplotlib.pyplot as plt
@@ -52,48 +49,51 @@ for i in range(10):
 def draw_rectangle(chosen_xcoord, chosen_ycoord, colour):
     if colour == 'b': # makes the square turn black
         rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor='black') #ship points
+        ax.add_patch(rect)
     elif colour == 'r': # makes the square turn red
         rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor='red') #hit
+        ax.add_patch(rect)
     elif colour == 'g': # makes the square turn grey
         rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor='grey') #miss
+        ax.add_patch(rect)
     # add the patch to the axes
-    ax.add_patch(rect)
+    
 
-"""# Player 1 Set-Up
+"""Player 1 Set-Up
 
-**check_valid_point_P1 : Check if point is valid** Used in place_stern_P1
+check_valid_point_P1 : Check if point is valid
+Used in place_stern_P1
 """
 
 #Setup Phase
 """P1 Setup"""
-def check_valid_point_P1(point_str, thing):
+def check_valid_point_P1(point, thing):
     #returns False if string is in invalid format, True if valid.
-    if (len(point_str) != 2) or (point_str[0].upper() not in "ABCDEFGHJK") or (point_str[1] not in "0123456789"):
-        print("Please enter valid coordinates! e.g. B1")
+    if (len(point) != 2) or (point[0].upper() not in "ABCDEFGHJK") or (point[1] not in "0123456789"):
         return False
         #Check if thing is within the board using ASCII index
-    elif (ord(point_str[0]) > 75 or ord(point_str[0]) < 65 or ord(point_str[1]) > 57 or ord(point_str[1]) < 48): 
+    elif (ord(point[0]) > 75 or ord(point[0]) < 65 or ord(point[1]) > 57 or ord(point[1]) < 48): 
         print(thing, " is out of board!")
         return False
     else:
         return True
 
 """place_stern_P1 : Place stern by asking for user input
-Returns stern coordinates as stern_coord (Point object)
 """
 
-def place_stern_P1(ship_name):
+def place_stern_P1(ship_name, ship_length):
     stern_bool = False
     
     while stern_bool == False :
-        stern_str = input("Where would you like the stern of your {} to be? e.g. A0. 'I' is not valid.".format(ship_name))#A0
-        stern_str = stern_str.upper()
-        stern_bool = check_valid_point_P1(stern_str, "Stern") #check if string is garbage
+        stern = input("Where would you like the stern of your {} ({}) to be? e.g. A0. 'I' is not valid.".format(ship_name, ship_length))#A0
+        stern = stern.upper()
+        stern_bool = check_valid_point_P1(stern, "Stern") #check if string is garbage
         if stern_bool == True:
-            draw_rectangle(stern_str[0], stern_str[1], black) #display stern as black square
-
-            return Point( stern_str[0] , stern_str[1] )
-            #returns stern coordinates as a Point object
+            draw_rectangle(stern[0], stern[1], 'black') #display stern as black square
+            return stern
+            #returns stern coordinates as a string
+        else:
+            print("Please enter valid coordinates! e.g. B1")
 
 """**generate_ship_sections_P1 : Generates a list of points containing the shape of the ship, depending on ship_name** Returns the list of points ls_points"""
 
@@ -108,20 +108,20 @@ def generate_ship_sections_P1(stern, ship_name, size ):
         if direction in "NSEW":
             for i in range(1, size):
                 if direction == "N":
-                    ls_points.append(Point(stern.x, chr(ord(stern.y) - i)))
+                    ls_points.append(stern[0] + chr(ord(stern[1]) - i))
                 elif direction == "W":
-                    ls_points.append(Point(chr(ord(stern.x) + i) , stern.y))
+                    ls_points.append(chr(ord(stern[0]) + i) + stern[1])
                 elif direction == "S":
-                    ls_points.append(Point(stern.x, chr(ord(stern.y) + i)))
+                    ls_points.append(stern[0] + chr(ord(stern[1]) + i))
                 elif direction == "E":
-                    ls_points.append(Point(chr(ord(stern.x) - i) , stern.y))
+                    ls_points.append(chr(ord(stern[0]) - i) + stern[1])
             direction_bool = True
         else:
             print("Please type [N/S/E/W]!")
             direction_bool = False
 
     for point in ls_points:
-      draw_rectangle(point.x, point.y, black) #display ship as black squares     
+      draw_rectangle(point[0], point[1], 'black') #display ship as black squares     
     return ls_points
 
 """**check_ship_sections_P1 : Check if all points within ls_points are valid (within board and not overlapping other ships)** Similar to check_valid_point_P1 but for ls_points instead of place_stern_P1"""
@@ -131,9 +131,9 @@ def check_ship_sections_P1(ship_name, ls_points):
     #use ASCII numbering to check
     for point in ls_points:
         #if point is out of board, break for loop
-        point_str = point.x + point.y
-        if not check_valid_point_P1(point_str, ship_name):
+        if not check_valid_point_P1(point, ship_name):
             points_valid = False
+            print("Choose another direction, ya ship's hangin' off the board ya dingus")
             break
         #check if point conflicts with another ship's points
         elif point in ls_all_ships_points_P1:
@@ -150,7 +150,7 @@ def place_ship_P1(ship_name):
     global all_ships_dict
     global ls_all_ships_points_P1 # necessary to check if current ship conflicts with previously placed ship
     size = all_ships_dict.get(ship_name) #get ship's size from dictionary
-    stern = place_stern_P1(ship_name) #ask player for stern position
+    stern = place_stern_P1(ship_name, all_ships_dict[ship_name]) #ask player for stern position
     
     ship_placed = False      
     while ship_placed == False:
@@ -168,29 +168,25 @@ def place_ship_P1(ship_name):
     
     for i in ls_points: #add the ship's points to list of known ships points
         ls_all_ships_points_P1.append(i)
-        draw_rectangle(i.x, i.y, black) #display ships as black squares
+        draw_rectangle(i[0], i[1], 'black') #display ships as black squares
     return [ship_name, ls_points]
 
 """CPU setup"""
-def check_valid_point_CPU(point_str):
+def check_valid_point_CPU(point):
     #Check if thing is within the board using ASCII index
-    if (ord(point_str[0]) > 75 or ord(point_str[0]) < 65 or ord(point_str[1]) > 57 or ord(point_str[1]) < 48): 
+    if (ord(point[0]) > 75 or ord(point[0]) < 65 or ord(point[1]) > 57 or ord(point[1]) < 48): 
         return False
     else:
         return True
 
 import random
 
-def generate_random_point_str():
+def generate_random_point():
     ls_valid_points = []
     for char in "ABCDEFGHJK":
         for num in "0123456789":
             ls_valid_points.append(char+num)
     return random.choice(ls_valid_points)
-
-def place_stern_CPU(ship_name):
-    stern_str = generate_random_point_str()
-    return Point( stern_str[0] , stern_str[1] )  #returns stern coordinates as a Point object
     
 def generate_ship_sections_CPU(stern, ship_name, size ):
     ls_points = [stern]
@@ -199,13 +195,13 @@ def generate_ship_sections_CPU(stern, ship_name, size ):
     direction = random.choice(valid_dir_ls)
     for i in range(1, size):
         if direction == "N":
-            ls_points.append(Point(stern.x, chr(ord(stern.y) - i)))
+            ls_points.append(stern[0] + chr(ord(stern[1]) - i))
         elif direction == "W":
-            ls_points.append(Point(chr(ord(stern.x) + i) , stern.y))
+            ls_points.append(chr(ord(stern[0]) + i) + stern[1])
         elif direction == "S":
-            ls_points.append(Point(stern.x, chr(ord(stern.y) + i)))
+            ls_points.append(stern[0] + chr(ord(stern[1]) + i))
         elif direction == "E":
-            ls_points.append(Point(chr(ord(stern.x) - i) , stern.y))  
+            ls_points.append(chr(ord(stern[0]) - i) + stern[1])
     return ls_points
 
 def check_ship_sections_CPU(ship_name, ls_points):
@@ -213,8 +209,7 @@ def check_ship_sections_CPU(ship_name, ls_points):
     #use ASCII numbering to check
     for point in ls_points:
         #if point is out of board, break for loop
-        point_str = point.x + point.y
-        if not check_valid_point_CPU(point_str):
+        if not check_valid_point_CPU(point):
             points_valid = False
             break
         #check if point conflicts with another ship's points
@@ -229,7 +224,7 @@ def place_ship_CPU(ship_name):
     global all_ships_dict
     global ls_all_ships_points_CPU # necessary to check if current ship conflicts with previously placed ship
     size = all_ships_dict.get(ship_name) #get ship's size from dictionary
-    stern = place_stern_CPU(ship_name) #ask player for stern position
+    stern = generate_random_point()
     
     ship_placed = False      
     while ship_placed == False:
@@ -259,14 +254,13 @@ def check_score(enemy_ship_dict):  #check if any enemy ships were sunk
             score +=1
     return score
 
-def attack(): #returns a Point object with a valid shot.
+def attack(): #returns a valid shot.
     global shot_list_P1
     verified_shot = False
     while verified_shot == False:
-        shot_str = input("Attack coordinates? e.g. A0 ")
-        shot_str = shot_str.upper()
-        if check_valid_point_P1(shot_str, "Shot"): #check if string is garbage            
-            shot = Point(shot_str[0], shot_str[1]) #save the shot as Point object
+        shot = input("Attack coordinates? e.g. A0 ")
+        shot = shot.upper()
+        if check_valid_point_P1(shot, "Shot"): #check if string is garbage            
             if shot in shot_list_P1:
                 print("You have taken this shot before! Choose another!") 
                 verified_shot = False
@@ -276,16 +270,18 @@ def attack(): #returns a Point object with a valid shot.
                 verified_shot = True
         else:
             verified_shot = False
+            print("Please enter valid coordinates! e.g. B1")
     shot_list_P1.append(shot)
+    print(shot_list_P1)
     return shot
 
 def check_hit(shot, enemy_ship_dict, enemy_ls_all_ships_points):
     if shot not in enemy_ls_all_ships_points: #check if shot hit anything
         print("You missed.")
-        draw_rectangle(shot.x, shot.y, 'grey')
+        draw_rectangle(shot[0], shot[1], 'grey')
     else: #finds the enemy ship with the shot and removes it from their list
-        print("Shot to {} was succesful!".format(str(shot.x + shot.y))) 
-        draw_rectangle(shot.x, shot.y, 'red')
+        print("Shot to {} was succesful!".format(shot) )
+        draw_rectangle(shot[0], shot[1], 'red')
         for ls_points in enemy_ship_dict.values():
             if shot in ls_points:
                 ls_points.remove(shot)
@@ -294,8 +290,7 @@ def check_hit(shot, enemy_ship_dict, enemy_ls_all_ships_points):
 def attack_CPU_random():
     verified_shot = False
     while verified_shot == False:
-        shot_str = generate_random_point_str()
-        shot = Point(shot_str[0], shot_str[1]) #save the shot as Point object
+        shot = generate_random_point()
         if shot in shot_list_CPU:
             verified_shot = False
         else:
@@ -306,19 +301,18 @@ def attack_CPU_random():
 def generate_add_shot(shot, valid_dir_ls):
     #Generating addiional strike locations as a dict with direction : Point
     add_shot_dict = {}
-    
     for direction in valid_dir_ls:
         if direction == "N":
-            add_shot_dict[Point(shot.x, chr(ord(shot.y) - 1))] = "N"
+            add_shot_dict[shot[0] + chr(ord(shot[1]) - 1)] = "N"
         elif direction == "W":
-            add_shot_dict[Point(chr(ord(shot.x) + 1) , shot.y)] = "W"
+            add_shot_dict[chr(ord(shot[0]) + 1) + shot[1]] = "W"
         elif direction == "S":
-            add_shot_dict[Point(shot.x, chr(ord(shot.y) + 1))] = "S"
+            add_shot_dict[shot[0] + chr(ord(shot[1]) + 1)] = "S"
         elif direction == "E":
-            add_shot_dict[Point(chr(ord(shot.x) - 1) , shot.y)] = "E"
+            add_shot_dict[chr(ord(shot[0]) - 1) + shot[1]] = "E"
     
     for point, direction in add_shot_dict.items(): #should try subtracting away and use a dictionary. useful to know the direction to whack
-        if (not check_valid_point_CPU(str(point.x + point.y))) or (point in shot_list_CPU):
+        if (not check_valid_point_CPU(point)) or (point in shot_list_CPU):
             del add_shot_dict[point]
     return add_shot_dict
 
@@ -333,7 +327,7 @@ def check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points, target_dict)
             for ship_name, ls_points in enemy_ship_dict.items(): #finds the enemy ship with the shot and removes it from their list
                 if shot in ls_points:
                     ls_points.remove(shot)
-                    print("CPU hit", ship_name, "at", str(shot.x) +str(shot.y))
+                    print("CPU hit", ship_name, "at", shot)
             #delete from target_dict and attack in known direction
             shot_dir = target_dict[shot]
             return generate_add_shot(shot, [shot_dir])
@@ -346,7 +340,7 @@ def check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points, target_dict)
             for ship_name, ls_points in enemy_ship_dict.items(): #finds the enemy ship with the shot and removes it from their list
                 if shot in ls_points:
                     ls_points.remove(shot)
-                    print("CPU hit", ship_name, "at", str(shot.x) +str(shot.y))
+                    print("CPU hit", ship_name, "at", shot)
             return generate_add_shot(shot, ["N", "S","E", "W"] ) #len 2 to 4
 
 """# Main Function
