@@ -20,39 +20,56 @@ point_to_ycoord_dict = { "9":0, "8":1, "7":2, "6":3, "5":4, "4":5, "3":6, "2":7,
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-board = plt.figure(figsize=[6,6])
+board = plt.figure(figsize = [6,6])
 board.patch.set_facecolor((1,1,.8))
-ax = board.add_subplot(111)
+ax_setup = board.add_subplot(211)
+ax_war = board.add_subplot(212)
 
 # draw the grid
 for x in range(11):
-    ax.plot([x, x], [0,10], 'k')
+    ax_setup.plot([x, x], [0,10], 'k')
+    ax_war.plot([x, x], [0,10], 'k')
 for y in range(11):
-    ax.plot([0, 10], [y,y], 'k')
+    ax_setup.plot([0, 10], [y,y], 'k')
+    ax_war.plot([0, 10], [y,y], 'k')
 
 # scale the axis area to fill the whole figure
-ax.set_position([0,0,1,1])
+ax_setup.set_position([0,0,1,1])
+ax_war.set_position([0,0,1,1])
 
 # get rid of axes and everything (the figure background will show through)
-ax.set_axis_off()
+ax_setup.set_axis_off()
+ax_war.set_axis_off()
 
 # scale the plot area conveniently (the board is in 0,0..18,18)
-ax.set_xlim(-1,11)
-ax.set_ylim(-1,11)
+ax_setup.set_xlim(-1,11)
+ax_setup.set_ylim(-1,11)
+ax_war.set_xlim(-1,11)
+ax_war.set_ylim(-1,11)
 
 # add axis labels to the axes
 x_axis_letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'] #x-axis names for plotting
 for i in range(10):
-    ax.text(i+0.4, 10.2, x_axis_letters[i])
-    ax.text(-0.4, 9.4-i, list(range(10))[i])
+    ax_setup.text(i+0.4, 10.2, x_axis_letters[i])
+    ax_setup.text(-0.4, 9.4-i, list(range(10))[i])
+    ax_war.text(i+0.4, 10.2, x_axis_letters[i])
+    ax_war.text(-0.4, 9.4-i, list(range(10))[i])
 
-"""Matplotlib draw_rectangle function : Changes a square's colour to black, grey or red"""    
-def draw_rectangle(point, colour):
+"""Matplotlib draw_rectangle_setup function : Changes a square's colour to black"""    
+def draw_rectangle_setup(point):
+    #convert the letter into an x-coordinate number, and swap the number index
+    chosen_xcoord = letter_to_xcoord_dict[point[0]]
+    chosen_ycoord = point_to_ycoord_dict[point[1]]
+    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = 'black') #ship points
+    ax_setup.add_patch(rect) # add the patch to the axes
+
+"""Matplotlib draw_rectangle_war function : Changes a square's colour to grey or red"""    
+def draw_rectangle_war(point, colour):
     #convert the letter into an x-coordinate number, and swap the number index
     chosen_xcoord = letter_to_xcoord_dict[point[0]]
     chosen_ycoord = point_to_ycoord_dict[point[1]]
     rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = str(colour)) #ship points
-    ax.add_patch(rect) # add the patch to the axes
+    ax_war.add_patch(rect) # add the patch to the axes
 
 """Player 1 Set-Up
 
@@ -84,7 +101,7 @@ def place_stern_P1(ship_name, ship_length):
         stern = stern.upper()
         stern_bool = check_valid_point_P1(stern, "Stern") #check if string is garbage
         if stern_bool == True:
-            draw_rectangle(stern, 'black') #display stern as black square
+            draw_rectangle_setup(stern) #display stern as black square
             plt.show(block = False)
             return stern
             #returns stern coordinates as a string
@@ -170,9 +187,8 @@ def place_ship_P1(ship_name):
     
     for i in ls_points: #add the ship's points to list of known ships points
         ls_all_ships_points_P1.append(i)
-        draw_rectangle(i, 'black') #display ships as black squares
+        draw_rectangle_setup(i) #display ships as black squares
         plt.show(block = False)
-        print('Rectangles drawn.')
     return [ship_name, ls_points]
 
 """CPU setup"""
@@ -285,10 +301,12 @@ def attack(): #returns a valid shot.
 def check_hit(shot, enemy_ship_dict, enemy_ls_all_ships_points):
     if shot not in enemy_ls_all_ships_points: #check if shot hit anything
         print("You missed.")
-        draw_rectangle(shot, 'grey')
+        draw_rectangle_war(shot, 'grey') #display miss as grey square
+        plt.show(block = False)
     else: #finds the enemy ship with the shot and removes it from their list
         print("Shot to {} was succesful!".format(shot) )
-        draw_rectangle(shot, 'red')
+        draw_rectangle_war(shot, 'red') #Display hit as red square
+        plt.show(block = False)
         for ls_points in enemy_ship_dict.values():
             if shot in ls_points:
                 ls_points.remove(shot)
@@ -308,6 +326,7 @@ def attack_CPU_random():
 def generate_add_shot(shot, valid_dir_ls):
     #Generating addiional strike locations as a dict with direction : Point
     add_shot_dict = {}
+    ls_to_del = []
     for direction in valid_dir_ls:
         if direction == "N":
             add_shot_dict[shot[0] + chr(ord(shot[1]) - 1)] = "N"
@@ -320,7 +339,9 @@ def generate_add_shot(shot, valid_dir_ls):
     
     for point, direction in add_shot_dict.items(): #should try subtracting away and use a dictionary. useful to know the direction to whack
         if (not check_valid_point_CPU(point)) or (point in shot_list_CPU):
-            del add_shot_dict[point]
+            ls_to_del.append(point)
+    for point in ls_to_del:
+        del add_shot_dict[point]        
     return add_shot_dict
 
 def check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points, target_dict):
@@ -367,7 +388,6 @@ def main():
     for ship_name in all_ships_dict:
         some_ship = place_ship_P1(ship_name)
         plt.draw()
-        print('Plot Shown.')
         some_ship_name = some_ship[0]
         some_ls_points = some_ship[1]
         P1_ship_dict[some_ship_name] = some_ls_points
@@ -396,8 +416,8 @@ def main():
             print("Player's Turn!")
             shot = attack()
             check_hit(shot, CPU_ship_dict, ls_all_ships_points_CPU)
+            plt.draw()
             player_turn = False
-            plt.show(block = False)
         else:
             print("CPU's Turn!")
             if target_dict == {}: #no targets
@@ -407,7 +427,6 @@ def main():
             target_dict = check_hit_CPU(CPU_shot, P1_ship_dict, ls_all_ships_points_P1, target_dict) #update target_dict
             shot_list_CPU.append(CPU_shot)
             player_turn = True
-            plt.show(block = False)
         
         #CPU checks for game end
         CPU_score = check_score(P1_ship_dict)
