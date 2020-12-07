@@ -426,9 +426,10 @@ def main():
         player_turn = False
 
     while game_not_over:
-        round_num += 1
-        print("Round", round_num)
+        
         if player_turn:
+            round_num += 1
+        print("Round", round_num)
             print("Player's Turn!")
             shot = attack()
             check_hit(shot, CPU_ship_dict, ls_all_ships_points_CPU)
