@@ -100,9 +100,9 @@ def generate_ship_sections_P1(stern, ship_name, size ):
     
     while direction_bool == False:
         #Generating ships points based on direction
-        direction = input("Which direction would you like your {} to face? [N/S/E/W] ".format(ship_name))
+        direction = input("Which direction would you like your {} to face? Type 'X' to choose another point. [N/S/E/W/X] ".format(ship_name))
         direction = direction.upper()
-        if direction in "NSEW":
+        if direction in "NSEWX":
             for i in range(1, size):
                 if direction == "N":
                     ls_points.append(stern[0] + chr(ord(stern[1]) - i))
@@ -112,9 +112,11 @@ def generate_ship_sections_P1(stern, ship_name, size ):
                     ls_points.append(stern[0] + chr(ord(stern[1]) + i))
                 elif direction == "E":
                     ls_points.append(chr(ord(stern[0]) - i) + stern[1])
+                elif direction == "X":
+                    return "X"
             direction_bool = True
         else:
-            print("Please type [N/S/E/W]!")
+            print("Please type [N/S/E/W/X]!")
             direction_bool = False
 
     for point in ls_points:
@@ -147,15 +149,18 @@ def place_ship_P1(ship_name):
     global all_ships_dict
     global ls_all_ships_points_P1 # necessary to check if current ship conflicts with previously placed ship
     size = all_ships_dict.get(ship_name) #get ship's size from dictionary
-    stern = place_stern_P1(ship_name, all_ships_dict[ship_name]) #ask player for stern position
-    
-    ship_placed = False      
+    ship_placed = False 
+
     while ship_placed == False:
+        stern = place_stern_P1(ship_name, all_ships_dict[ship_name]) #ask player for stern position
         #generate list of ship points based on known stern and requested direction
         ls_points = generate_ship_sections_P1(stern, ship_name, size)
-        
-        #check if the ships points are valid based on the known board and known ships
-        points_valid = check_ship_sections_P1(ship_name, ls_points)
+        if ls_points == "X":
+            ship_placed = False
+            points_valid = False
+        else:
+            #check if the ships points are valid based on the known board and known ships
+            points_valid = check_ship_sections_P1(ship_name, ls_points)
         #if any of the ship's points are invalid, points_valid = False and the for loop breaks, restarting the while loop
         #If the for loop doesn't break, all ship points are valid and we set direction_bool to True to break the while loop
         if points_valid:
@@ -174,7 +179,6 @@ def place_ship_P1(ship_name):
         plt.show(block = False)
         print('Rectangles drawn.')
     return [ship_name, ls_points]
-
 
 """CPU setup"""
 def check_valid_point_CPU(point):
@@ -370,7 +374,8 @@ def main():
         some_ls_points = some_ship[1]
         P1_ship_dict[some_ship_name] = some_ls_points
         print("{} written to {}!".format(some_ls_points, some_ship_name))
-    
+        plt.show(block = False)   
+
     #Setting CPU ships
     for ship_name in all_ships_dict:
         some_ship_CPU = place_ship_CPU(ship_name)
@@ -394,7 +399,7 @@ def main():
             shot = attack()
             check_hit(shot, CPU_ship_dict, ls_all_ships_points_CPU)
             player_turn = False
-            plt.show()
+            plt.show(block = False)
         else:
             print("CPU's Turn!")
             if target_dict == {}: #no targets
@@ -404,7 +409,7 @@ def main():
             target_dict = check_hit_CPU(CPU_shot, P1_ship_dict, ls_all_ships_points_P1, target_dict) #update target_dict
             shot_list_CPU.append(CPU_shot)
             player_turn = True
-            plt.show()
+            plt.show(block = False)
         
         #CPU checks for game end
         CPU_score = check_score(P1_ship_dict)
