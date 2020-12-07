@@ -130,11 +130,11 @@ def generate_ship_sections_P1(stern, ship_name, size ):
                 if direction == "N":
                     ls_points.append(stern[0] + chr(ord(stern[1]) - i))
                 elif direction == "W":
-                    ls_points.append(chr(ord(stern[0]) + i) + stern[1])
+                    ls_points.append(chr(ord(stern[0]) - i) + stern[1])
                 elif direction == "S":
                     ls_points.append(stern[0] + chr(ord(stern[1]) + i))
                 elif direction == "E":
-                    ls_points.append(chr(ord(stern[0]) - i) + stern[1])
+                    ls_points.append(chr(ord(stern[0]) + i) + stern[1])
                 elif direction == "X":
                     return "X"
             direction_bool = True
