@@ -22,8 +22,8 @@ import matplotlib.patches as patches
 
 board = plt.figure(figsize = [6,6])
 board.patch.set_facecolor((1,1,.8))
-ax_setup = board.add_subplot(211)
-ax_war = board.add_subplot(212)
+ax_setup = board.add_subplot(221)
+ax_war = board.add_subplot(222)
 
 # draw the grid
 for x in range(11):
