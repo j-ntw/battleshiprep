@@ -439,7 +439,7 @@ def main():
         CPU_score = check_score(P1_ship_dict)
         P1_score = check_score(CPU_ship_dict)
         print("CPU_score:", CPU_score)
-        print("P1_score": P1_score)
+        print("P1_score", P1_score)
         if CPU_score == 5:
             print("You lost!")
             game_not_over = False # what if they are 5 at the same time
