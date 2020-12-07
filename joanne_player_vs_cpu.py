@@ -117,14 +117,6 @@ def generate_ship_sections_P1(stern, ship_name, size ):
         else:
             print("Please type [N/S/E/W/X]!")
             direction_bool = False
-
-    for point in ls_points:
-        #make a dictionary: key = input letter, value = what it would mean as an x-coordinate
-        letter_to_xcoord_dict = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'J': 8, 'K': 9}
-        #convert the letter into an x-coordinate number
-        chosen_xcoord = letter_to_xcoord_dict[point[0]]
-        draw_rectangle(chosen_xcoord, int(point[1]), 'black') #display ships as black squares
-        plt.show(block = False)
     return ls_points
 
 """**check_ship_sections_P1 : Check if all points within ls_points are valid (within board and not overlapping other ships)** Similar to check_valid_point_P1 but for ls_points instead of place_stern_P1"""
