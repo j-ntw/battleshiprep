@@ -11,14 +11,16 @@ shot_list_CPU = []
 ls_all_ships_points_P1 = []
 ls_all_ships_points_CPU = []
 CPU_target = []
-#bride = []
+#make a dictionary: key = input letter, value = what it would mean as an x-coordinate
+letter_to_xcoord_dict = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'J': 8, 'K': 9}
+point_to_ycoord_dict = { "9":0, "8":1, "7":2, "6":3, "5":4, "4":5, "3":6, "2":7, "1":8, "0":9}
 
 """Initialise matplotlib board"""
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-board = plt.figure(figsize=[9,9])
+board = plt.figure(figsize=[6,6])
 board.patch.set_facecolor((1,1,.8))
 ax = board.add_subplot(111)
 
@@ -46,7 +48,11 @@ for i in range(10):
 
 """Matplotlib draw_rectangle function : Changes a square's colour to black, grey or red"""
 
-def draw_rectangle(chosen_xcoord, chosen_ycoord, colour):
+def draw_rectangle(point, colour):
+    #convert the letter into an x-coordinate number
+    chosen_xcoord = letter_to_xcoord_dict[point[0]]
+    chosen_ycoord = point_to_ycoord_dict[point[1]]
+    
     if colour == 'b': # makes the square turn black
         rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor='black') #ship points
         ax.add_patch(rect)
@@ -89,7 +95,7 @@ def place_stern_P1(ship_name, ship_length):
         stern = stern.upper()
         stern_bool = check_valid_point_P1(stern, "Stern") #check if string is garbage
         if stern_bool == True:
-            draw_rectangle(stern[0], stern[1], 'black') #display stern as black square
+            draw_rectangle(int(stern[0]), int(stern[1]), 'black') #display stern as black square
             return stern
             #returns stern coordinates as a string
         else:
