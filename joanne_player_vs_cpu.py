@@ -35,7 +35,7 @@ for y in range(11):
 
 # scale the axis area to fill the whole figure
 ax_setup.set_position([0,0,1,1])
-ax_war.set_position([0,0,1,1])
+ax_war.set_position([1,0,1,1])
 
 # get rid of axes and everything (the figure background will show through)
 ax_setup.set_axis_off()
@@ -55,12 +55,16 @@ for i in range(10):
     ax_war.text(i+0.4, 10.2, x_axis_letters[i])
     ax_war.text(-0.4, 9.4-i, list(range(10))[i])
 
+# add titles to the boards
+ax_setup.text(4,-0.5,'Your Board')
+ax_war.text(4,-0.5,'CPU\'s Board')
+
 """Matplotlib draw_rectangle_setup function : Changes a square's colour to black"""    
 def draw_rectangle_setup(point):
     #convert the letter into an x-coordinate number, and swap the number index
     chosen_xcoord = letter_to_xcoord_dict[point[0]]
     chosen_ycoord = point_to_ycoord_dict[point[1]]
-    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = 'black') #ship points
+    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = 'black', zorder = 1) #ship points
     ax_setup.add_patch(rect) # add the patch to the axes
 
 """Matplotlib draw_rectangle_war function : Changes a square's colour to grey or red"""    
@@ -68,8 +72,16 @@ def draw_rectangle_war(point, colour):
     #convert the letter into an x-coordinate number, and swap the number index
     chosen_xcoord = letter_to_xcoord_dict[point[0]]
     chosen_ycoord = point_to_ycoord_dict[point[1]]
-    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = str(colour)) #ship points
+    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = str(colour), zorder = 1) #ship points
     ax_war.add_patch(rect) # add the patch to the axes
+
+"""Matplotlib draw_rectangle_cpu function : Draws a red square over a square when hit by CPU"""  
+def draw_rectangle_cpu(point):
+    #convert the letter into an x-coordinate number, and swap the number index
+    chosen_xcoord = letter_to_xcoord_dict[point[0]]
+    chosen_ycoord = point_to_ycoord_dict[point[1]]
+    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = 'red', zorder = 2) #ship points
+    ax_setup.add_patch(rect) # add the patch to the axes
 
 """Player 1 Set-Up
 
@@ -345,7 +357,7 @@ def generate_add_shot(shot, valid_dir_ls):
     return add_shot_dict
 
 def check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points, target_dict):
-    if shot in target_dict.keys():
+    if shot in list(target_dict):
         if shot not in enemy_ls_all_ships_points: #target miss
             print("CPU missed.")
             #delete from target_dict and try another
@@ -356,6 +368,8 @@ def check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points, target_dict)
                 if shot in ls_points:
                     ls_points.remove(shot)
                     print("CPU hit", ship_name, "at", shot)
+                    draw_rectangle_cpu(shot)
+                    plt.show(block = False)
             #delete from target_dict and attack in known direction
             shot_dir = target_dict[shot]
             return generate_add_shot(shot, [shot_dir])
@@ -369,6 +383,8 @@ def check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points, target_dict)
                 if shot in ls_points:
                     ls_points.remove(shot)
                     print("CPU hit", ship_name, "at", shot)
+                    draw_rectangle_cpu(shot)
+                    plt.show(block = False)
             return generate_add_shot(shot, ["N", "S","E", "W"] ) #len 2 to 4
 
 """# Main Function
@@ -423,8 +439,9 @@ def main():
             if target_dict == {}: #no targets
                 CPU_shot = attack_CPU_random()
             else: #attack CPU target
-                CPU_shot = random.choice(target_dict.keys())
+                CPU_shot = random.choice(list(target_dict))
             target_dict = check_hit_CPU(CPU_shot, P1_ship_dict, ls_all_ships_points_P1, target_dict) #update target_dict
+            plt.draw()
             shot_list_CPU.append(CPU_shot)
             player_turn = True
         
@@ -433,12 +450,12 @@ def main():
         P1_score = check_score(CPU_ship_dict)
         if CPU_score == 5:
             print("You lost!")
-            game_not_over == False # what if they are 5 at the same time
+            game_not_over = False # what if they are 5 at the same time
         elif P1_score == 5:
             print("You won!")
-            game_not_over == False
+            game_not_over = False
         else:
-            game_not_over == True
+            game_not_over = True
 
 
 main()
