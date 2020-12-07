@@ -146,17 +146,21 @@ def place_ship_P1(ship_name):
     global ls_all_ships_points_P1 # necessary to check if current ship conflicts with previously placed ship
     size = all_ships_dict.get(ship_name) #get ship's size from dictionary
     ship_placed = False 
+    stern_placed = False
 
     while ship_placed == False:
-        stern = place_stern_P1(ship_name, all_ships_dict[ship_name]) #ask player for stern position
+        if stern_placed == False:
+            stern = place_stern_P1(ship_name, all_ships_dict[ship_name]) #ask player for stern position
         #generate list of ship points based on known stern and requested direction
         ls_points = generate_ship_sections_P1(stern, ship_name, size)
         if ls_points == "X":
             ship_placed = False
             points_valid = False
+            stern_placed = False
         else:
             #check if the ships points are valid based on the known board and known ships
             points_valid = check_ship_sections_P1(ship_name, ls_points)
+            stern_placed = True
         #if any of the ship's points are invalid, points_valid = False and the for loop breaks, restarting the while loop
         #If the for loop doesn't break, all ship points are valid and we set direction_bool to True to break the while loop
         if points_valid:
@@ -188,10 +192,9 @@ def generate_random_point():
             ls_valid_points.append(char+num)
     return random.choice(ls_valid_points)
     
-def generate_ship_sections_CPU(stern, ship_name, size ):
+def generate_ship_sections_CPU(stern, ship_name, size, valid_dir_ls ):
     ls_points = [stern]
     #Generating ships points based on random direction
-    valid_dir_ls = ["N", "S","E", "W"]
     direction = random.choice(valid_dir_ls)
     for i in range(1, size):
         if direction == "N":
@@ -202,7 +205,7 @@ def generate_ship_sections_CPU(stern, ship_name, size ):
             ls_points.append(stern[0] + chr(ord(stern[1]) + i))
         elif direction == "E":
             ls_points.append(chr(ord(stern[0]) - i) + stern[1])
-    return ls_points
+    return [ls_points, direction]
 
 def check_ship_sections_CPU(ship_name, ls_points):
     points_valid = True
@@ -224,19 +227,23 @@ def place_ship_CPU(ship_name):
     global all_ships_dict
     global ls_all_ships_points_CPU # necessary to check if current ship conflicts with previously placed ship
     size = all_ships_dict.get(ship_name) #get ship's size from dictionary
-    stern = generate_random_point()
-    
+    valid_dir_ls = []
     ship_placed = False      
     while ship_placed == False:
-        #generate list of ship points based on known stern and requested direction
-        ls_points = generate_ship_sections_CPU(stern, ship_name, size)
-        
+        #CPU picks a random stern location
+        if valid_dir_ls == []:
+            stern = generate_random_point()
+            valid_dir_ls = ["N", "S","E", "W"] # CPU will try NSEW
+        generated_ship = generate_ship_sections_CPU(stern, ship_name, size, valid_dir_ls)
+        ls_points = generated_ship[0]
+        direction = generated_ship[1]
         #check if the ships points are valid based on the known board and known ships
         points_valid = check_ship_sections_CPU(ship_name, ls_points)
-        #if any of the ship's points are invalid, points_valid = False and the for loop breaks, restarting the while loop
-        #If the for loop doesn't break, all ship points are valid and we set direction_bool to True to break the while loop
+        
         if points_valid:
             ship_placed = True
+        else:
+            valid_dir_ls.remove(direction) #CPU will not try this direction again.
 
     print("Ship placed!") #CPU placed ship
     
