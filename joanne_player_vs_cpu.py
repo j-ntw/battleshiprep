@@ -11,7 +11,6 @@ shot_list_CPU = []
 ls_all_ships_points_P1 = []
 ls_all_ships_points_CPU = []
 CPU_target = []
-bride = []
 
 """Initialise matplotlib board"""
 
@@ -41,8 +40,8 @@ ax.set_ylim(-1,11)
 # add axis labels to the axes
 x_axis_letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'] #x-axis names for plotting
 for i in range(10):
-    ax.text(i+0.4, -0.4, x_axis_letters[i])
-    ax.text(-0.4, i+0.4, list(range(10))[i])
+    ax.text(i+0.4, 10.2, x_axis_letters[i])
+    ax.text(-0.4, 9.4-i, list(range(10))[i])
 
 """Matplotlib draw_rectangle function : Changes a square's colour to black, grey or red"""
 
@@ -170,6 +169,7 @@ def place_ship_P1(ship_name):
         ls_all_ships_points_P1.append(i)
         draw_rectangle(i[0], i[1], 'black') #display ships as black squares
     return [ship_name, ls_points]
+
 
 """CPU setup"""
 def check_valid_point_CPU(point):
@@ -350,6 +350,7 @@ def check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points, target_dict)
 
 """main function"""
 def main():
+    plt.show(block = False)
     game_not_over = True
     #Setting player ships
     P1_ship_dict = {}
@@ -362,6 +363,7 @@ def main():
         some_ls_points = some_ship[1]
         P1_ship_dict[some_ship_name] = some_ls_points
         print("{} written to {}!".format(some_ls_points, some_ship_name))
+        plt.show(block = False)
     
     #Setting CPU ships
     for ship_name in all_ships_dict:
@@ -386,6 +388,7 @@ def main():
             shot = attack()
             check_hit(shot, CPU_ship_dict, ls_all_ships_points_CPU)
             player_turn = False
+            plt.show()
         else:
             print("CPU's Turn!")
             if target_dict == {}: #no targets
@@ -395,6 +398,7 @@ def main():
             target_dict = check_hit_CPU(CPU_shot, P1_ship_dict, ls_all_ships_points_P1, target_dict) #update target_dict
             shot_list_CPU.append(CPU_shot)
             player_turn = True
+            plt.show()
         
         #CPU checks for game end
         CPU_score = check_score(P1_ship_dict)
