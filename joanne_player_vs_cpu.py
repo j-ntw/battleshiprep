@@ -4,9 +4,9 @@ shot_list_P1 = []
 shot_list_CPU = []
 ls_all_ships_points_P1 = []
 ls_all_ships_points_CPU = []
-CPU_target = []
-#make a dictionary: key = input letter, value = what it would mean as an x-coordinate
+#Dictionary to convert the letter into an x-coordinate number
 letter_to_xcoord_dict = { 'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'J': 8, 'K': 9 }
+#Dictionary to swap the number index
 point_to_ycoord_dict = { "9" : 0, "8" : 1, "7" : 2, "6" : 3, "5" : 4, "4" : 5, "3" : 6, "2" : 7, "1" : 8, "0" : 9 }
 
 """Initialise matplotlib board"""
@@ -58,7 +58,6 @@ plt.show(block = False)
 
 """Matplotlib draw_rectangle_setup function : Changes a square's colour to black"""    
 def draw_rectangle_setup(point):
-    #convert the letter into an x-coordinate number, and swap the number index
     chosen_xcoord = letter_to_xcoord_dict[point[0]]
     chosen_ycoord = point_to_ycoord_dict[point[1]]
     rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = 'black', zorder = 1) #ship points
@@ -66,7 +65,6 @@ def draw_rectangle_setup(point):
 
 """Matplotlib draw_rectangle_war function : Changes a square's colour to grey or red"""    
 def draw_rectangle_war(point, colour):
-    #convert the letter into an x-coordinate number, and swap the number index
     chosen_xcoord = letter_to_xcoord_dict[point[0]]
     chosen_ycoord = point_to_ycoord_dict[point[1]]
     rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = str(colour), zorder = 1) #ship points
@@ -74,7 +72,6 @@ def draw_rectangle_war(point, colour):
 
 """Matplotlib draw_rectangle_cpu function : Draws a red square over a square when hit by CPU"""  
 def draw_rectangle_cpu(point):
-    #convert the letter into an x-coordinate number, and swap the number index
     chosen_xcoord = letter_to_xcoord_dict[point[0]]
     chosen_ycoord = point_to_ycoord_dict[point[1]]
     rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = 'red', zorder = 2) #ship points
