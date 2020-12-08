@@ -45,8 +45,6 @@ This project is created with the following technologies:
 * matplotlib.pyplot
 * matplotlib.patches
 
-draw rectangle
-
 Starter code for board setup adapted from Stack Exchange answer for GO board setup:
 
 https://stackoverflow.com/questions/24563513/drawing-a-go-board-with-matplotlib
@@ -87,21 +85,25 @@ Variable used in draw_rectangle_setup and remove_rectangle_setup to determine zo
 
 The board is created as a figure in matplotlib and has two subplots, ax_setup and ax_war, which are displayed at all times and vertically stacked.
 ax_setup, labelled 'Your Board', displays the ships on the Player's board. ax_war, labelled 'CPU's Board', displays the Player's hits and misses on the CPU's board.
-The subplots are displayed as grids with origin in the upper-left corner, x-axis of range 'A' to 'K' (excluding 'I') and y-axis of range 0 to 9.
+The subplots are displayed as grids with x-axis of range 'A' to 'K' (excluding 'I') and y-axis of range 0 to 9.
 
 ### Drawing Patches
 
 #### draw_rectangle_setup(point)
 
-Takes in a point variable and draws a black square on the board
+Takes in a point. Draws a black square on the board. Used during P1 Setup to first display the stern, then the whole ship, at the point as decided by the Player's input.
+
+#### remove_rectangle_setup(point)
+
+Takes in a point. Draws a square the colour of the board's background over any existing squares at the specified point. Used during P1 Setup to visually indicate that the Player has removed a ship's stern from the specified point.
 
 #### draw_rectangle_war(point, colour)
 
-Takes a point and colour. Draws either a grey or red square on the board
+Takes in a point and colour. Draws either a grey or red square on the board. Used during War Phase to display the Player's hits (red) and misses (grey) on the CPU's board, at the points as decided by the Player's input.
 
 #### draw_rectangle_cpu(point)
 
-Takes a point. Draws a red square over a black square (existing ship coordinates) to register a hit by CPU
+Takes in a point. Draws a red square over the existing black square at the specified point. Used during War Phase to display the CPU's hits on the Player's board.
 
 ### P1 Setup
 
