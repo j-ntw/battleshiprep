@@ -359,7 +359,7 @@ def attack_CPU_random():
     return shot
 
 def generate_add_shot(shot, valid_dir_ls):
-    #Generating addiional strike locations as a dict with direction : Point
+    #Generating addiional strike locations as a dict with Point : direction
     add_shot_dict = {}
     ls_to_del = []
     for direction in valid_dir_ls:
