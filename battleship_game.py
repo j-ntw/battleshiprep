@@ -1,3 +1,16 @@
+"""
+Battleship Game
+Single Player vs CPU
+
+Written by:
+Joshua Ng (1005285)
+Joanne Ng (1005639)
+Lau Wuarn Hong (1005313)
+Irvine Novian (2005491)
+
+Class 20F02, Team 08 
+"""
+
 """Global Variables"""
 all_ships_dict = {"Carrier": 5 , "Battleship" : 4 , "Cruiser" : 3, "Submarine" : 3 , "Destroyer" : 2}
 shot_list_P1 = []
