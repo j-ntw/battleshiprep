@@ -211,11 +211,26 @@ Returns add_shot_dict
 
 Takes a shot, an enemy's ship dictionary, an enemy's list of all ship points and a target dictionary.
 
-This is the CPU's attack decision tree. If the target dictionary is empty, it will have taken an empty shot. Hence, the else loop activates. 
+This is the CPU's attack decision tree. 
+
+If there are targets in the target dictionary, the if loop is activated.
+
+If the CPU misses, it will remove the point from the target_dict and pick another random point. It will do so until the target_dict is empty, after which the CPU will take a random shot.
+
+If the target dictionary is empty the else loop activates. 
 
 If shot is not in the enemy's list of ship points, it will inform the player of the miss.
 
 If it is a hit, a red rectangle is drawn over the shot coordinates on the CPU board. By looping through enemy_ship_dict, the point is removed from the relevant list of ship points.
 
+### Main Function
 
-If there are targets in the target dictionary, the if loop is activated. 
+The main function takes no parameters and returns nothing. plt.draw() is called to draw the board. P1_ship_dict and CPU_ship_dict are initialised as empty dictionaries, ready to be filled up in the Setup Phase. game_not_over is set to True to start the while loop in War Phase and round_num is initialised as 0.
+
+In Setup Phase, main() iterates through all_ships_dict to generate ships for the player and the CPU using place_ship_P1() and place_ship_CPU respectively.
+
+In War Phase, the starting player is randomly chosen. While the game is not over, if it is the Player's turn , he will be prompted to attack. His shot is checked and the boards are updated accordingly. His turn ends as player_turn is set to False.
+
+If it is the CPU's turn the CPU runs through its decision tree and updates the target_dict accordingly. the board is updated and the CPU_shot_list is updated here to avoid repetition in the decision tree. At the end of CPU's turn, player_turn is set to True.
+
+At the end of either the CPU or Player's turn, main() checks the CPU_score with check_score(). If the CPU_score is 5, it has destroyed all the player's ships and game_not_over is set to False, breaking the while loop and ending the game. If P1_score is 5, the player has destroyed all the CPU's ships and game_not_over is set to False, breaking the while loop and ending the game. Otherwise, the game continues until a win/lose condition is fufilled.
