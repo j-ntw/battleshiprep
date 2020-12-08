@@ -77,10 +77,17 @@ Empty list used to record the ship coordinates of Player 1. Used to check for ov
 
 #### ls_all_ships_points_CPU
 
-Empty list used to record the ship coordinates of CPU Used to check for overlap of ship coordinates. Never modified after creation.
+Empty list used to record the ship coordinates of CPU. Used to check for overlap of ship coordinates. Never modified after creation.
+
+#### drawing_order
+
+Variable used in draw_rectangle_setup and remove_rectangle_setup to determine zorder of matplotlib patches. 
 
 ### Board Setup
 
+The board is created as a figure in matplotlib and has two subplots, ax_setup and ax_war, which are displayed at all times and vertically stacked.
+ax_setup, labelled 'Your Board', displays the ships on the Player's board. ax_war, labelled 'CPU's Board', displays the Player's hits and misses on the CPU's board.
+The subplots are displayed as grids with origin in the upper-left corner, x-axis of range 'A' to 'K' (excluding 'I') and y-axis of range 0 to 9.
 
 ### Drawing Patches
 
@@ -134,7 +141,7 @@ Returns a list of the ship's name and a nested list of the ship's points.
 
 #### check_valid_point_CPU(point)
 
-Takes in point as parameter. Returns True if point is within the board, False if otherwise
+Takes in point as parameter. Returns True if point is within the board, False if otherwise.
 
 #### generate_random_point()
 
