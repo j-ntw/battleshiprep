@@ -198,6 +198,7 @@ def place_ship_P1(ship_name):
             points_valid = False
             stern_placed = False
             remove_rectangle_setup(stern)
+            plt.draw()
         else:
             #check if the ships points are valid based on the known board and known ships
             points_valid = check_ship_sections_P1(ship_name, ls_points)
