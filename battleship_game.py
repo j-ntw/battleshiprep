@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
 board = plt.figure(figsize = [6,6])
-board.patch.set_facecolor((1,1,.8))
+board.patch.set_facecolor((0.39,0.73,0.98)) #blue like the sea
 board.tight_layout()
 board.subplots_adjust(right = 0.5)
 ax_setup = board.add_subplot(2, 1, 1)
@@ -70,7 +70,7 @@ def remove_rectangle_setup(point):
     global drawing_order
     chosen_xcoord = letter_to_xcoord_dict[point[0]]
     chosen_ycoord = point_to_ycoord_dict[point[1]]
-    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = (1,1,.8), zorder = drawing_order) #ship points
+    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = (0.39,0.73,0.98), zorder = drawing_order) #ship points
     ax_setup.add_patch(rect) # add the patch to the axes
 
 """Matplotlib draw_rectangle_war function : Changes a square's colour to grey or red"""    
