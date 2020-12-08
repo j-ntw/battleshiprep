@@ -84,7 +84,7 @@ def draw_rectangle_war(point, colour):
 def draw_rectangle_cpu(point):
     chosen_xcoord = letter_to_xcoord_dict[point[0]]
     chosen_ycoord = point_to_ycoord_dict[point[1]]
-    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = 'red', zorder = 10) #ship points
+    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = 'red', zorder = 50) #ship points
     ax_setup.add_patch(rect) # add the patch to the axes
 
 """Player 1 Set-Up
@@ -101,7 +101,7 @@ def check_valid_point_P1(point, thing):
         return False
         #Check if thing is within the board using ASCII index
     elif (ord(point[0]) > 75 or ord(point[0]) < 65 or ord(point[1]) > 57 or ord(point[1]) < 48): 
-        print(thing, " is out of board!")
+        print("\n", thing, " is out of board!")
         return False
     else:
         return True
@@ -112,7 +112,7 @@ def place_stern_P1(ship_name, ship_length):
     stern_bool = False
     
     while stern_bool == False :
-        stern = input("Where would you like the stern of your {} (Length: {}) to be? e.g. A0. 'I' is not valid.".format(ship_name, ship_length))#A0
+        stern = input("\nWhere would you like the stern of your {} (Length: {}) to be? e.g. A0. 'I' is not valid.".format(ship_name, ship_length))#A0
         stern = stern.upper()
         stern_bool = check_valid_point_P1(stern, "Stern") #check if string is garbage
         if stern_bool == True:
@@ -122,7 +122,7 @@ def place_stern_P1(ship_name, ship_length):
             return stern
             #returns stern coordinates as a string
         else:
-            print("Please enter valid coordinates! e.g. B1")
+            print("\nPlease enter valid coordinates! e.g. B1")
 
 """generate_ship_sections_P1 : Generates a list of points containing the shape of the ship, depending on ship_name Returns the list of points ls_points"""
 
@@ -132,7 +132,7 @@ def generate_ship_sections_P1(stern, ship_name, size ):
     
     while direction_bool == False:
         #Generating ships points based on direction
-        direction = input("Which direction would you like your {} to face? Type 'X' to choose another point. [N/S/E/W/X] ".format(ship_name))
+        direction = input("\nWhich direction would you like your {} to face? Type 'X' to choose another point. [N/S/E/W/X] ".format(ship_name))
         direction = direction.upper()
         if direction in "NSEWX":
             for i in range(1, size):
@@ -148,7 +148,7 @@ def generate_ship_sections_P1(stern, ship_name, size ):
                     return "X"
             direction_bool = True
         else:
-            print("Please type [N/S/E/W/X]!")
+            print("\nPlease type [N/S/E/W/X]!")
             direction_bool = False
     #handles the case where "I" is generated
     for point in ls_points:
@@ -173,11 +173,11 @@ def check_ship_sections_P1(ship_name, ls_points):
         #if point is out of board, break for loop
         if not check_valid_point_P1(point, ship_name):
             points_valid = False
-            print("Choose another direction, {} out of board!".format(ship_name))
+            print("\nChoose another direction, {} out of board!".format(ship_name))
             break
         #check if point conflicts with another ship's points
         elif point in ls_all_ships_points_P1:
-            print(ship_name, " overlaps an existing ship!")
+            print("\n", ship_name, " overlaps an existing ship!")
             points_valid = False
             break
         else:
@@ -215,7 +215,7 @@ def place_ship_P1(ship_name):
         if points_valid:
             ship_placed = True
 
-    print("Ship placed!") #tell the player the ship is placed
+    print("\nShip placed!") #tell the player the ship is placed
     
     for i in ls_points: #add the ship's points to list of known ships points
         ls_all_ships_points_P1.append(i)
@@ -306,7 +306,7 @@ def place_ship_CPU(ship_name):
         else:
             valid_dir_ls.remove(direction) #CPU will not try this direction again.
 
-    print("{} placed!".format(ship_name)) #CPU placed ship
+    print("\nCPU placed {}!".format(ship_name)) #CPU placed ship
     
     for i in ls_points: #add the ship's points to list of known ships points
         ls_all_ships_points_CPU.append(i)
@@ -329,14 +329,14 @@ def attack(): #returns a valid shot.
         shot = shot.upper()
         if check_valid_point_P1(shot, "Shot"): #check if string is garbage            
             if shot in shot_list_P1:
-                print("You have taken this shot before! Choose another!") 
+                print("\nYou have taken this shot before! Choose another!") 
                 verified_shot = False
             else:
                 print("Shooting...")
                 verified_shot = True
         else:
             verified_shot = False
-            print("Please enter valid coordinates! e.g. B1")
+            print("\nPlease enter valid coordinates! e.g. B1")
     shot_list_P1.append(shot)
     return shot
 
@@ -346,7 +346,9 @@ def check_hit(shot, enemy_ship_dict, enemy_ls_all_ships_points):
         draw_rectangle_war(shot, 'grey') #display miss as grey square
         plt.show(block = False)
     else: #finds the enemy ship with the shot and removes it from their list
+        print("!!!!!"*3)
         print("Shot to {} was succesful!".format(shot) )
+        print("!!!!!"*3)
         draw_rectangle_war(shot, 'red') #Display hit as red square
         plt.show(block = False)
         for ship_name, ls_points in enemy_ship_dict.items():
@@ -398,7 +400,9 @@ def check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points, target_dict)
             for ship_name, ls_points in enemy_ship_dict.items(): #finds the enemy ship with the shot and removes it from their list
                 if shot in ls_points:
                     ls_points.remove(shot)
+                    print("!!!!!"*3)
                     print("CPU hit", ship_name, "at", shot)
+                    print("!!!!!"*3)
                     draw_rectangle_cpu(shot)
                     plt.show(block = False)
             #delete from target_dict and attack in known direction
@@ -413,7 +417,9 @@ def check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points, target_dict)
             for ship_name, ls_points in enemy_ship_dict.items(): #finds the enemy ship with the shot and removes it from their list
                 if shot in ls_points:
                     ls_points.remove(shot)
+                    print("!!!!!"*3)
                     print("CPU hit", ship_name, "at", shot)
+                    print("!!!!!"*3)
                     draw_rectangle_cpu(shot)
                     plt.show(block = False)
             return generate_add_shot(shot, ["N", "S","E", "W"] ) #len 2 to 4
@@ -455,14 +461,14 @@ def main():
         
         if player_turn:
             round_num += 1
-            print("Round", round_num)
-            print("Player's Turn!")
+            print("\n\nRound", round_num)
+            print("\nPlayer's Turn!")
             shot = attack()
             check_hit(shot, CPU_ship_dict, ls_all_ships_points_CPU)
             plt.draw()
             player_turn = False
         else:
-            print("CPU's Turn!")
+            print("\nCPU's Turn!")
             if target_dict == {}: #no targets
                 CPU_shot = attack_CPU_random()
             else: #attack CPU target
