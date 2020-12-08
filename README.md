@@ -59,23 +59,23 @@ Note: Points in this code are strings where the first char is a single alphabet 
 
 #### all_ships_dict 
 
-Dictionary of the 5 ships as keys and their sizes as values
+Dictionary of the 5 ships as keys and their sizes as values.
 
 #### shot_list_P1
 
-Empty list used to record the shots that Player 1 takes
+Empty list used to record the shots that the Player takes.
 
 #### shot_list_CPU
 
-Empty list used to record the shots that CPU takes
+Empty list used to record the shots that the CPU takes.
 
 #### ls_all_ships_points_P1
 
-Empty list used to record the ship coordinates of Player 1. Used to check for overlap of ship coordinates. Never modified after creation.
+Empty list used to record the ship coordinates of the Player. Used to check for overlap of ship coordinates. Never modified after creation.
 
 #### ls_all_ships_points_CPU
 
-Empty list used to record the ship coordinates of CPU. Used to check for overlap of ship coordinates. Never modified after creation.
+Empty list used to record the ship coordinates of the CPU. Used to check for overlap of ship coordinates. Never modified after creation.
 
 #### drawing_order
 
