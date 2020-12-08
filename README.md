@@ -9,7 +9,9 @@
 * [Documentation](#documentation)
 
 ## General info
-This project is a Battleship game meant to be played by a single player versus CPU. A PDF of the rules can be found here: https://themindcafe.com.sg/wp-content/uploads/1970/01/Battleship.pdf
+This project is a Battleship game meant to be played by a single player versus CPU.
+
+A PDF of the rules can be found here: https://themindcafe.com.sg/wp-content/uploads/1970/01/Battleship.pdf
 
 ## Description
 The objective of this game is to be the first to sink all of the opponent's ships. In this version of the game, there is Setup Phase and War Phase.
@@ -18,13 +20,11 @@ In Setup Phase, the ships are placed by first selecting the location of the ship
 
 Once both the player and the CPU have set up their ships, War Phase begins. They take turns guessing the locations of the opponent's ships. 
 
-### Features
+### Feature(s)
 
 #### Targetting Algorithm 
 The CPU has a simple targetting algorithm: when it has no targets, it will shoot a random target. When it hits a ship, it will target the North, South, East and West tiles of the target and exhaust the targets. If one of the targets results in a hit, the CPU will follow that direction until it misses, then return to random targets. If all of the targets miss, it will also return to random targets.
 The CPU is not smart enough to aim for open areas, revisit a bombed area or stop bombing if a longer ship is already destroyed (e.g. if the Carrier is already destroyed and it has shot another ship 4 times, it will still try to shoot the same ship a 5th time.)
-
-#### 
 
 The description of the ships are as follows:
 
@@ -185,4 +185,37 @@ Once a valid shot is captured, it is appended to shot_list_P1. Returns shot.
 
 Takes in shot, an enemy's ship dictionary and an enemy's list of all ship points. 
 
-If the shot is not within the enemy's list of all ship points, 
+If the shot is not within the enemy's list of all ship points, the Player is informed they missed the CPU's ships along with a visual indicator. A grey rectangle is drawn over the shot coordinates on the CPU board.
+
+Otherwise, the Player is informed they successfully hit a ship and a red rectangle is drawn over the shot coordinates on the CPU board. By looping through enemy_ship_dict, the point is removed from the relevant list of ship points.
+
+Returns nothing.
+
+### War Phase: CPU
+
+#### attack_CPU_random()
+
+Takes no parameters. Generates a random shot. If the shot is previously shot, it generates a random shot. Returns shot.
+
+#### generate_add_shot()
+
+Takes a shot and a list of valid directions. This function generates additional strike locations as a dictionary with shot and direction as key and value respectively.
+
+add_shot_dict is initialised as an empty dictionary and ls_to_del as an empty list. For each direction in the list of valid directions, the corresponding point is generated, offset 1 tile from the given shot.
+
+For each generated point, if it is invalid (as checked by check_valid_point_CPU() )or already in shot_list_CPU, it is deleted from add_shot_dict. 
+
+Returns add_shot_dict
+
+#### check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points, target_dict)
+
+Takes a shot, an enemy's ship dictionary, an enemy's list of all ship points and a target dictionary.
+
+This is the CPU's attack decision tree. If the target dictionary is empty, it will have taken an empty shot. Hence, the else loop activates. 
+
+If shot is not in the enemy's list of ship points, it will inform the player of the miss.
+
+If it is a hit, a red rectangle is drawn over the shot coordinates on the CPU board. By looping through enemy_ship_dict, the point is removed from the relevant list of ship points.
+
+
+If there are targets in the target dictionary, the if loop is activated. 
