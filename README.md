@@ -13,18 +13,25 @@ This project is a Battleship game meant to be played by a single player versus C
 
 A PDF of the rules can be found here: https://themindcafe.com.sg/wp-content/uploads/1970/01/Battleship.pdf
 
+### Authors:
+
+Joshua Ng (1005285)
+
+Joanne Ng (1005639)
+
+Lau Wuarn Hong (1005313)
+
+Irvine Novian (2005491)
+
+
+Class 20F02, Team 08 
+
 ## Description
 The objective of this game is to be the first to sink all of the opponent's ships. In this version of the game, there is Setup Phase and War Phase.
 
 In Setup Phase, the ships are placed by first selecting the location of the ship's stern (the back of the ship), then selecting the direction the ship will face.
 
 Once both the player and the CPU have set up their ships, War Phase begins. They take turns guessing the locations of the opponent's ships. 
-
-### Feature(s)
-
-#### Targetting Algorithm 
-The CPU has a simple targetting algorithm: when it has no targets, it will shoot a random target. When it hits a ship, it will target the North, South, East and West tiles of the target and exhaust the targets. If one of the targets results in a hit, the CPU will follow that direction until it misses, then return to random targets. If all of the targets miss, it will also return to random targets.
-The CPU is not smart enough to aim for open areas, revisit a bombed area or stop bombing if a longer ship is already destroyed (e.g. if the Carrier is already destroyed and it has shot another ship 4 times, it will still try to shoot the same ship a 5th time.)
 
 The description of the ships are as follows:
 
@@ -37,7 +44,13 @@ Cruiser: 3 holes
 Submarine: 3 holes
 
 Destroyer : 2 holes
-	
+
+### Feature(s)
+
+#### Targetting Algorithm 
+The CPU has a simple targetting algorithm: when it has no targets, it will shoot a random target. When it hits a ship, it will target the North, South, East and West tiles of the target and exhaust the targets. If one of the targets results in a hit, the CPU will follow that direction until it misses, then return to random targets. If all of the targets miss, it will also return to random targets.
+The CPU is not smart enough to aim for open areas, revisit a bombed area or stop bombing if a longer ship is already destroyed (e.g. if the Carrier is already destroyed and it has shot another ship 4 times, it will still try to shoot the same ship a 5th time.)
+
 ## References
 This project is created with the following technologies:
 * Python 3.8.5
