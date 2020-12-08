@@ -8,6 +8,7 @@ ls_all_ships_points_CPU = []
 letter_to_xcoord_dict = { 'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'J': 8, 'K': 9 }
 #Dictionary to swap the number index
 point_to_ycoord_dict = { "9" : 0, "8" : 1, "7" : 2, "6" : 3, "5" : 4, "4" : 5, "3" : 6, "2" : 7, "1" : 8, "0" : 9 }
+drawing_order = 0
 
 """Initialise matplotlib board"""
 
@@ -58,16 +59,18 @@ plt.show(block = False)
 
 """Matplotlib draw_rectangle_setup function : Changes a square's colour to black"""    
 def draw_rectangle_setup(point):
+    global drawing_order
     chosen_xcoord = letter_to_xcoord_dict[point[0]]
     chosen_ycoord = point_to_ycoord_dict[point[1]]
-    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = 'black', zorder = 1) #ship points
+    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = 'black', zorder = drawing_order) #ship points
     ax_setup.add_patch(rect) # add the patch to the axes
 
 """Matplotlib remove_rectangle_setup function : Changes a square's colour back to original"""    
 def remove_rectangle_setup(point):
+    global drawing_order
     chosen_xcoord = letter_to_xcoord_dict[point[0]]
     chosen_ycoord = point_to_ycoord_dict[point[1]]
-    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = (1,1,.8), zorder = 2) #ship points
+    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = (1,1,.8), zorder = drawing_order) #ship points
     ax_setup.add_patch(rect) # add the patch to the axes
 
 """Matplotlib draw_rectangle_war function : Changes a square's colour to grey or red"""    
@@ -81,7 +84,7 @@ def draw_rectangle_war(point, colour):
 def draw_rectangle_cpu(point):
     chosen_xcoord = letter_to_xcoord_dict[point[0]]
     chosen_ycoord = point_to_ycoord_dict[point[1]]
-    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = 'red', zorder = 2) #ship points
+    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = 'red', zorder = 10) #ship points
     ax_setup.add_patch(rect) # add the patch to the axes
 
 """Player 1 Set-Up
@@ -105,6 +108,7 @@ def check_valid_point_P1(point, thing):
 
 """place_stern_P1 : Place stern by asking for user input"""
 def place_stern_P1(ship_name, ship_length):
+    global drawing_order
     stern_bool = False
     
     while stern_bool == False :
@@ -112,6 +116,7 @@ def place_stern_P1(ship_name, ship_length):
         stern = stern.upper()
         stern_bool = check_valid_point_P1(stern, "Stern") #check if string is garbage
         if stern_bool == True:
+            drawing_order += 1
             draw_rectangle_setup(stern) #display stern as black square
             plt.draw()
             return stern
@@ -182,6 +187,7 @@ def check_ship_sections_P1(ship_name, ls_points):
 """place_ship_P1 : Matches ls_points to ship_name in global list ls_all_ships_points_P1** Uses results of check_valid_point_P1 and check_ship_sections_P1, and points from place_stern_P1 and generate_ship_sections_P1"""
 
 def place_ship_P1(ship_name):
+    global drawing_order
     global all_ships_dict
     global ls_all_ships_points_P1 # necessary to check if current ship conflicts with previously placed ship
     size = all_ships_dict.get(ship_name) #get ship's size from dictionary
@@ -197,6 +203,7 @@ def place_ship_P1(ship_name):
             ship_placed = False
             points_valid = False
             stern_placed = False
+            drawing_order += 1
             remove_rectangle_setup(stern)
             plt.draw()
         else:
@@ -212,6 +219,7 @@ def place_ship_P1(ship_name):
     
     for i in ls_points: #add the ship's points to list of known ships points
         ls_all_ships_points_P1.append(i)
+        drawing_order += 1
         draw_rectangle_setup(i) #display ships as black squares
         plt.show(block = False)
     return [ship_name, ls_points]
