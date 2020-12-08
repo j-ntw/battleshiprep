@@ -18,8 +18,13 @@ In Setup Phase, the ships are placed by first selecting the location of the ship
 
 Once both the player and the CPU have set up their ships, War Phase begins. They take turns guessing the locations of the opponent's ships. 
 
+### Features
+
+#### Targetting Algorithm 
 The CPU has a simple targetting algorithm: when it has no targets, it will shoot a random target. When it hits a ship, it will target the North, South, East and West tiles of the target and exhaust the targets. If one of the targets results in a hit, the CPU will follow that direction until it misses, then return to random targets. If all of the targets miss, it will also return to random targets.
 The CPU is not smart enough to aim for open areas, revisit a bombed area or stop bombing if a longer ship is already destroyed (e.g. if the Carrier is already destroyed and it has shot another ship 4 times, it will still try to shoot the same ship a 5th time.)
+
+#### 
 
 The description of the ships are as follows:
 
@@ -47,43 +52,8 @@ Starter code for board setup adapted from Stack Exchange answer for GO board set
 https://stackoverflow.com/questions/24563513/drawing-a-go-board-with-matplotlib
 	
 ## Setup
-To run this project, run joanne_battleshipmain_vs_cpu.py alone. 
+To run this project, run battleship_game.py alone. 
 
-There are 2 phases: 
-1. Setup Phase
-2. War Phase
-
-Setup Phase:
-No overlap
-
-Once all done, CPU will write ship positions to dict
-
-Initialise the board and start War Phase
-
-War Phase:
-This is an infinite loop till a win or lose condition is fulfilled
-
-Player 1 Attack:
-Player 1 calls a shot e.g."A1"
-CPU checks if miss or hit and updates the board. (clear all output)
-If hit and not in list of known enemy ships:
-    add to list of known enemy ships
-
-CPU checks if Player 2 has any surviving ships.
-If Player 2 has no remaining ships
-    Player 1 wins
-else
-    Player 1 ends turn, Player 2 turn starts
-
-CPU Attack:
-CPU calls a random shot from list of available points.
-CPU checks if miss or hit and updates the board. (clear all output)
-CPU checks if Player 1 has any surviving ships.
-If Player 1 has no remaining ships
-    Player 2 wins
-else
-    Player 2 ends turn, Player 1 turn starts\
-    
 ## Documentation
 Note: Points in this code are strings where the first char is a single alphabet from "ABCDEFGHJK" and the second char is a single digit.
 
@@ -109,9 +79,10 @@ Empty list used to record the ship coordinates of Player 1. Used to check for ov
 
 Empty list used to record the ship coordinates of CPU Used to check for overlap of ship coordinates. Never modified after creation.
 
-#### matplot lib here
+### Board Setup
 
 
+### Drawing Patches
 
 #### draw_rectangle_setup(point)
 
@@ -193,4 +164,25 @@ Once valid ship points are generated, they are appended to ls_all_ships_points_C
 
 Returns a list of the ship's name and a nested list of the ship's points.
 
-#### War Phase: Player 1
+
+### War Phase: Player 1
+
+#### check_score(enemy_ship_dict)
+
+Takes in an enemy ship's dictionary. For example, Player score is computed using CPU dictionary and vice versa. 
+
+score is intialised as 0. For every empty list in the dictionary, 1 is added to the score. Returns score.
+
+#### attack()
+
+Takes in no parameters. References the global variable shot_list_P1.
+
+This function asks the Player for attack coordinates. If the shot is invalid or if the shot has been taken before, the function prints a statement to inform the player and prompts them for new coordinates.
+
+Once a valid shot is captured, it is appended to shot_list_P1. Returns shot.
+
+#### check_hit(shot, enemy_ship_dict, enemy_ls_all_ships_points)
+
+Takes in shot, an enemy's ship dictionary and an enemy's list of all ship points. 
+
+If the shot is not within the enemy's list of all ship points, 
