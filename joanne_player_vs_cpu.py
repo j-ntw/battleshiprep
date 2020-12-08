@@ -63,6 +63,13 @@ def draw_rectangle_setup(point):
     rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = 'black', zorder = 1) #ship points
     ax_setup.add_patch(rect) # add the patch to the axes
 
+"""Matplotlib remove_rectangle_setup function : Changes a square's colour back to original"""    
+def remove_rectangle_setup(point):
+    chosen_xcoord = letter_to_xcoord_dict[point[0]]
+    chosen_ycoord = point_to_ycoord_dict[point[1]]
+    rect = patches.Rectangle((chosen_xcoord, chosen_ycoord), 1, 1, facecolor = (1,1,.8), zorder = 2) #ship points
+    ax_setup.add_patch(rect) # add the patch to the axes
+
 """Matplotlib draw_rectangle_war function : Changes a square's colour to grey or red"""    
 def draw_rectangle_war(point, colour):
     chosen_xcoord = letter_to_xcoord_dict[point[0]]
@@ -106,7 +113,7 @@ def place_stern_P1(ship_name, ship_length):
         stern_bool = check_valid_point_P1(stern, "Stern") #check if string is garbage
         if stern_bool == True:
             draw_rectangle_setup(stern) #display stern as black square
-            plt.show(block = False)
+            plt.draw()
             return stern
             #returns stern coordinates as a string
         else:
@@ -190,6 +197,7 @@ def place_ship_P1(ship_name):
             ship_placed = False
             points_valid = False
             stern_placed = False
+            remove_rectangle_setup(stern)
         else:
             #check if the ships points are valid based on the known board and known ships
             points_valid = check_ship_sections_P1(ship_name, ls_points)
@@ -403,7 +411,7 @@ def check_hit_CPU(shot, enemy_ship_dict, enemy_ls_all_ships_points, target_dict)
 
 """Main Function: Puts everything together"""
 def main():
-    plt.show(block = False)
+    plt.draw()
     game_not_over = True
     #Setting player ships
     P1_ship_dict = {}
@@ -417,7 +425,7 @@ def main():
         some_ls_points = some_ship[1]
         P1_ship_dict[some_ship_name] = some_ls_points
         print("{} written to {}!".format(some_ls_points, some_ship_name))
-        plt.show(block = False)   
+        plt.draw()  
 
     #Setting CPU ships
     for ship_name in all_ships_dict:
