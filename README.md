@@ -21,7 +21,7 @@ Joanne Ng (1005639)
 
 Lau Wuarn Hong (1005313)
 
-Irvine Novian (2005491)
+Irvine Novian (1005491)
 
 
 Class 20F02, Team 08 
