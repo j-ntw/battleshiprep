@@ -1,13 +1,11 @@
 import random
-def choose_start(ls_player_id):
-    return random.choice(ls_player_id)
-    
+
 def attack():
     shot_bool = False
     my_turn_bool = True
     while shot_bool == False:
         shot_str = input("Attack coordinates? e.g. A0 ")
-        if check_valid_point(shot_str, "Shot"): #check if string is garbage
+        if check_valid_point_P1(shot_str, "Shot"): #check if string is garbage
             shot = Point(shot[0].upper(), shot[1]) #save the shot as Point object
             if shot in shot_list:
                 print("You have taken this shot before! Choose another!") 
@@ -28,3 +26,5 @@ def attack():
         print("You missed.")
         shot_list.append(shot)
     myturn_bool = False
+
+    def attack_CPU():
