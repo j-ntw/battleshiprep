@@ -1,5 +1,5 @@
 # battleshiprep
- Repository for 1D game battleships
+ Repository for 1D game battleships. Note: the main branch is unfinished. Play a simpler, finished version in player_vs_cpu branch!
 
 ## Table of contents
 * [General info](#general-info)
